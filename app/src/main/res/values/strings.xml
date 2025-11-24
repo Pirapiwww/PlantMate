@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">PlantMate</string>
+
+    <!-- Bottom Navbar -->
+    <string name="navbar_home">Home</string>
+    <string name="navbar_journal">Journal</string>
+    <string name="navbar_bookmark">Bookmark</string>
+    <string name="navbar_profile">Profile</string>
+
+    <!-- Feature -->
+    <string name="plant_journal">Plant Journal</string>
+    <string name="plant_lens">Plant Lens</string>
+    <string name="plant_encyclopedia">Plant Encyclopedia</string>
+    <string name="plant_news">Plant News</string>
+
+    <!-- Menu Home -->
+    <string name="my_journal">My Journal</string>
+    <string name="my_bookmark">My Bookmark</string>
+    <string name="latest_news">Latest Plant News</string>
+
+    <string name="detail">See Detail >></string>
+
+    <!-- Menu My Journal -->
+    <string name="preparation">Preparation</string>
+    <string name="planting">Planting</string>
+    <string name="treatment">Treatment</string>
+
+    <!-- Menu Profile -->
+
+
+    <!-- Plant Journal Feature -->
+    <string name="phase">Phase</string>
+    <string name="note">Additional Note</string>
+
+    <string name="preparation_date">Preparation Date</string>
+    <string name="plant_name">Plant Name</string>
+    <string name="plant_type">Plant Type</string>
+    <string name="growing_media">Growing Media</string>
+    <string name="container">Container?</string>
+
+    <string name="seeds">Number of Seeds</string>
+    <string name="planting_date">Planting Date</string>
+    <string name="how_to_plant">How to Plant</string>
+    <string name="initial_conditions">Initial Conditions</string>
+
+    <string name="plant_condition">Plant Condition</string>
+    <string name="treatment_date">Treatment Date</string>
+    <string name="watering">Watering</string>
+    <string name="Fertilizer">Fertilizer</string>
+    <string name="problem_details">Problem Details</string>
+    <string name="solution_details">solution Details</string>
+
+    <!-- Plant Lens Feature -->
+
+    <!-- Plant Encyclopedia Feature -->
+    <string name="top_search">Top Search</string>
+    <string name="search_result">Search Result</string>
+    <string name="search">Search</string>
+
+
+
+
+
+
+
+
+</resources>
