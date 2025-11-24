@@ -1,26 +1,25 @@
 package com.example.plantmate.ui.plantjournal
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.plantmate.ui.theme.PlantMateTheme
+import com.example.plantmate.R
+
 
 @Composable
 fun PlantJournalScreen() {
 
-    var selectedStage by remember { mutableStateOf("Persiapan") }
+    var selectedStage by remember { mutableStateOf("Perawatan") }
 
     val stageOptions = listOf("Persiapan", "Penanaman", "Perawatan")
 
@@ -94,7 +93,11 @@ fun StageDropdown(selected: String, options: List<String>, onSelected: (String) 
     var expanded by remember { mutableStateOf(false) }
 
     Column {
-        Text("Tahap")
+        Text(
+            stringResource(id = R.string.phase),
+            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+        )
+
         Box {
             OutlinedButton(
                 onClick = { expanded = true },
@@ -127,14 +130,23 @@ fun PreparationForm() {
     var media by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
+    Text(
+        stringResource(id = R.string.preparation_date),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+
     OutlinedTextField(
         value = date,
         onValueChange = { date = it },
         label = { Text("Tanggal Persiapan") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.plant_name),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = plantName,
@@ -143,8 +155,10 @@ fun PreparationForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
-
+    Text(
+        stringResource(id = R.string.plant_type),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
     OutlinedTextField(
         value = plantType,
         onValueChange = { plantType = it },
@@ -152,7 +166,10 @@ fun PreparationForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.growing_media),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = media,
@@ -161,14 +178,17 @@ fun PreparationForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.note),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = notes,
         onValueChange = { notes = it },
         label = { Text("Catatan Tambahan") },
         modifier = Modifier.fillMaxWidth(),
-        minLines = 3
+        minLines = 6
     )
 }
 
@@ -181,6 +201,11 @@ fun PlantingForm() {
     var condition by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
+    Text(
+        stringResource(id = R.string.seeds),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+
     OutlinedTextField(
         value = seedCount,
         onValueChange = { seedCount = it },
@@ -188,7 +213,10 @@ fun PlantingForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.planting_date),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = plantingDate,
@@ -197,7 +225,10 @@ fun PlantingForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.how_to_plant),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = method,
@@ -206,7 +237,10 @@ fun PlantingForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.initial_conditions),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = condition,
@@ -215,14 +249,17 @@ fun PlantingForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.note),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = notes,
         onValueChange = { notes = it },
         label = { Text("Catatan Tambahan") },
         modifier = Modifier.fillMaxWidth(),
-        minLines = 3
+        minLines = 6
     )
 }
 
@@ -237,6 +274,11 @@ fun CareForm() {
     var solution by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
+    Text(
+        stringResource(id = R.string.plant_condition),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+
     OutlinedTextField(
         value = plantCondition,
         onValueChange = { plantCondition = it },
@@ -244,7 +286,10 @@ fun CareForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.treatment_date),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = noteDate,
@@ -253,7 +298,10 @@ fun CareForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.watering),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = watering,
@@ -262,7 +310,10 @@ fun CareForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.fertilizer),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = fertilizer,
@@ -271,34 +322,43 @@ fun CareForm() {
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.problem_details),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = issue,
         onValueChange = { issue = it },
         label = { Text("Masalah / Gejala") },
         modifier = Modifier.fillMaxWidth(),
-        minLines = 2
+        minLines = 4
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.solution_details),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = solution,
         onValueChange = { solution = it },
         label = { Text("Tindakan / Solusi") },
         modifier = Modifier.fillMaxWidth(),
-        minLines = 2
+        minLines = 4
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        stringResource(id = R.string.note),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
 
     OutlinedTextField(
         value = notes,
         onValueChange = { notes = it },
         label = { Text("Catatan Tambahan") },
         modifier = Modifier.fillMaxWidth(),
-        minLines = 3
+        minLines = 6
     )
 }
 
