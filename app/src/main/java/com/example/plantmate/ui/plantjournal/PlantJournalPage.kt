@@ -19,7 +19,7 @@ import com.example.plantmate.R
 @Composable
 fun PlantJournalScreen() {
 
-    var selectedStage by remember { mutableStateOf("Perawatan") }
+    var selectedStage by remember { mutableStateOf("Persiapan") }
 
     val stageOptions = listOf("Persiapan", "Penanaman", "Perawatan")
 
