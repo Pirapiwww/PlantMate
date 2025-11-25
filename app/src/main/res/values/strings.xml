@@ -60,6 +60,17 @@
 
 
 
+    <!-- Placeholder Card -->
+    <string name="news_source1">detik.com</string>
+    <string name="news_date1">Sabtu, 22 Nov 2025 13:00 WIB</string>
+    <string name="news_title1">Hati-hati Tanaman Bisa Mati Gegara Kutu Putih! Begini Cara Basminya</string>
+
+    <string name="news_source2">compas.com</string>
+    <string name="news_date2">Senin, 24 Nov 2025 18:32 WIB</string>
+    <string name="news_title2">Tanaman Hias Sebaiknya Diletakkan Berdekatan atau Berjarak?</string>
+
+
+
 
 
 

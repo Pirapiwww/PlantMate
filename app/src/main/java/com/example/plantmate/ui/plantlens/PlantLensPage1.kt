@@ -10,6 +10,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,7 +18,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.plantmate.R
 import java.io.File
 
 @Composable
@@ -49,83 +53,96 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-
-        // TOP BAR
+        modifier = Modifier.fillMaxSize()
+    ){
+        // ============================
+        //          TOP BAR
+        // ============================
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .background(Color(0xFFDDE6C7))
+                .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                modifier = Modifier.size(24.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                text = "Plant Lens",
+                stringResource(id = R.string.plant_lens),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.width(48.dp))
+            Spacer(modifier = Modifier.width(24.dp)) // menjaga text tetap center
         }
 
-        Text(
-            text = "Arahkan kamera ke daun atau bagian tanaman.",
-            textAlign = TextAlign.Center,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 32.dp)
-        )
-
-
-        // === LIVE CAMERA PREVIEW ===
-        CameraPreview(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(480.dp),
-            onUseCase = { capture ->
-                imageCapture = capture
-            }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // === ANALISIS BUTTON ===
-        Button(
-            onClick = {
-                val outputFile = File(
-                    context.cacheDir,
-                    "snap_${System.currentTimeMillis()}.jpg"
-                )
-                val uri = FileProvider.getUriForFile(
-                    context,
-                    context.packageName + ".provider",
-                    outputFile
-                )
-
-                val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
-
-                imageCapture?.takePicture(
-                    outputOptions,
-                    ContextCompat.getMainExecutor(context),
-                    object : ImageCapture.OnImageSavedCallback {
-                        override fun onImageSaved(result: ImageCapture.OutputFileResults) {
-                            onAnalysis(uri)  // pindah ke halaman result
-                        }
-
-                        override fun onError(exc: ImageCaptureException) {
-                            exc.printStackTrace()
-                        }
-                    }
-                )
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Text("Analisis")
+
+            Text(
+                text = "Arahkan kamera ke daun atau bagian tanaman.",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 16.dp)
+            )
+
+
+            // === LIVE CAMERA PREVIEW ===
+            CameraPreview(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(480.dp),
+                onUseCase = { capture ->
+                    imageCapture = capture
+                }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // === ANALISIS BUTTON ===
+            Button(
+                onClick = {
+                    val outputFile = File(
+                        context.cacheDir,
+                        "snap_${System.currentTimeMillis()}.jpg"
+                    )
+                    val uri = FileProvider.getUriForFile(
+                        context,
+                        context.packageName + ".provider",
+                        outputFile
+                    )
+
+                    val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
+
+                    imageCapture?.takePicture(
+                        outputOptions,
+                        ContextCompat.getMainExecutor(context),
+                        object : ImageCapture.OnImageSavedCallback {
+                            override fun onImageSaved(result: ImageCapture.OutputFileResults) {
+                                onAnalysis(uri)  // pindah ke halaman result
+                            }
+
+                            override fun onError(exc: ImageCaptureException) {
+                                exc.printStackTrace()
+                            }
+                        }
+                    )
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("Analisis")
+            }
         }
     }
 }
