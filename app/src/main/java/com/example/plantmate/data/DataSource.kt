@@ -3,6 +3,7 @@ package com.example.plantmate.data
 import com.example.plantmate.R
 import com.example.plantmate.model.PlantNews
 import com.example.plantmate.model.FeatureIcon
+import com.example.plantmate.model.PlantEncyclopedia
 
 class DataSource {
 
@@ -29,6 +30,12 @@ class DataSource {
             FeatureIcon(R.drawable.lens, R.string.plant_lens),
             FeatureIcon(R.drawable.encyclopedia,R.string.plant_encyclopedia),
             FeatureIcon(R.drawable.news, R.string.plant_news)
+        )
+    }
+
+    fun loadEncyclopedia(): List<PlantEncyclopedia>{
+        return listOf<PlantEncyclopedia>(
+            PlantEncyclopedia(R.drawable.bayam_merah, R.string.encyclopedia_title, R.string.encyclopedia_harvest, R.string.encyclopedia_difficult)
         )
     }
 }

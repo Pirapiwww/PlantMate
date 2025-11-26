@@ -60,6 +60,7 @@
 
 
 
+
     <!-- Placeholder Card -->
     <string name="news_source1">detik.com</string>
     <string name="news_date1">Sabtu, 22 Nov 2025 13:00 WIB</string>
@@ -68,6 +69,13 @@
     <string name="news_source2">compas.com</string>
     <string name="news_date2">Senin, 24 Nov 2025 18:32 WIB</string>
     <string name="news_title2">Tanaman Hias Sebaiknya Diletakkan Berdekatan atau Berjarak?</string>
+
+
+
+    <!-- Placeholder Encyclopedia -->
+    <string name="encyclopedia_title">BAYAM MERAH</string>
+    <string name="encyclopedia_harvest">30-40 Hari</string>
+    <string name="encyclopedia_difficult">SEDANG</string>
 
 
 
