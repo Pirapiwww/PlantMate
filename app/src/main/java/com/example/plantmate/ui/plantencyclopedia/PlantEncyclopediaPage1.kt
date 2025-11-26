@@ -68,6 +68,20 @@ fun PlantEncyclopediaSearchScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Search Bar
+        OutlinedTextField(
+            value = "",
+            onValueChange = { },
+            placeholder = { Text("Search plant...") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Section Title
         Text(
             text = "Search Result",
@@ -104,17 +118,21 @@ fun EncyclopediaCard(encyclopedia: PlantEncyclopedia, modifier: Modifier = Modif
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Texts
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
 
             // Title
             Text(
                 text = stringResource(encyclopedia.title),
                 fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Harvest
             Row(
@@ -127,43 +145,52 @@ fun EncyclopediaCard(encyclopedia: PlantEncyclopedia, modifier: Modifier = Modif
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Difficult
+            // Difficulty
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Penanaman")
 
                 Box(
                     modifier = Modifier
-                        .background(Color.Yellow, RoundedCornerShape(20.dp))
-                        .size(width = 60.dp, height = 20.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xFFFFD54F))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
                     Text(
                         text = stringResource(encyclopedia.difficult),
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
 
-            // Bookmark Button
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Bookmark button kecil & rapi
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
-                        .background(Color.Yellow, RoundedCornerShape(30.dp))
-                        .padding(horizontal = 24.dp, vertical = 10.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(Color(0xFFFFD54F))
+                        .padding(horizontal = 14.dp, vertical = 6.dp)
                 ) {
-                    Text("Bookmark", fontWeight = FontWeight.Medium)
+                    Text(
+                        "Bookmark",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize
+                    )
                 }
             }
-
         }
     }
 }
+
 
 
 @Composable
