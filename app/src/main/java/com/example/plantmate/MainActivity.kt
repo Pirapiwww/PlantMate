@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.plantmate.ui.theme.PlantMateTheme
 
-import com.example.plantmate.ui.plantencyclopedia.PlantEncyclopediaScreen
+import com.example.plantmate.ui.plantlens.PlantLensInputScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PlantMateTheme {
-                PlantEncyclopediaScreen( )
+                PlantLensInputScreen ()
             }
         }
     }
