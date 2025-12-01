@@ -34,7 +34,7 @@
 
     <string name="preparation_date">Preparation Date</string>
     <string name="plant_name">Plant Name</string>
-    <string name="plant_type">Plant Type</string>
+    <string name="plant_type">Plant Category</string>
     <string name="growing_media">Growing Media</string>
     <string name="container">Container?</string>
 

@@ -56,6 +56,8 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.3")
     implementation("androidx.camera:camera-core:1.3.3")
     implementation("androidx.camera:camera-extensions:1.3.3")
+    implementation("org.jsoup:jsoup:1.17.2") 
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     testImplementation(libs.junit)
 

@@ -61,14 +61,14 @@ fun FeatureCard(
         // Icon box
         Box(
             modifier = Modifier
-                .size(56.dp)
+                .size(60.dp)
                 .background(Color(0xFFDDE6C7), RoundedCornerShape(12.dp)),
             contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(feature.featureImage),
                 contentDescription = null,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(24.dp)
             )
         }
 

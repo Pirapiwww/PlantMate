@@ -77,7 +77,6 @@ fun PlantHomeScreen() {
                     )
                 )
 
-
                 Spacer(modifier = Modifier.width(12.dp))
 
                 // Profile Button (tanpa background)
@@ -98,8 +97,6 @@ fun PlantHomeScreen() {
             featureList = DataSource().loadFeature(),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         // ---------------------- YOUR JOURNAL ----------------------
         HomeSectionTitle("Your Journal")
 
@@ -112,29 +109,8 @@ fun PlantHomeScreen() {
 
         // ---------------------- LATEST PLANT NEWS ----------------------
         HomeSectionTitle("Latest Plant News")
+        // news card row
 
-        HomeCardPlaceholder()
-    }
-}
-
-@Composable
-fun HomeMenuItem(title: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFFEAEAEA))
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelSmall,
-            textAlign = TextAlign.Center
-        )
     }
 }
 
