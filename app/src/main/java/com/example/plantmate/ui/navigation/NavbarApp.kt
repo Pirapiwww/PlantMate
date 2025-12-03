@@ -21,7 +21,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.plantmate.data.api.ApiProvider
 import com.example.plantmate.data.repository.EncyclopediaRepository
 import com.example.plantmate.data.viewmodel.EncyclopediaViewModel
 import com.example.plantmate.data.viewmodel.EncyclopediaViewModelFactory
@@ -64,27 +63,14 @@ fun NavbarApp(navController: NavHostController) {
             )
         }
         composable(
-            route = "result?imageUri={imageUri}",
-            arguments = listOf(
-                navArgument("imageUri") {
-                    type = NavType.StringType
-                    defaultValue = ""
-                    nullable = true
-                }
-            )
+            "result?imageUri={imageUri}",
+            arguments = listOf(navArgument("imageUri") { defaultValue = "" })
         ) { entry ->
-
-            val imageUri = entry.arguments?.getString("imageUri")
-            val apiKey = "VSjIrbSoXGTfXqcJXhQQHCEIh5FR2wjuEHGwUsInpOcAe4rQso"
-
             PlantLensResultScreen(
-                imageUri = imageUri,
-                apiKey = apiKey,
-                plantIdApi = ApiProvider.plantIdApi,
+                imageUri = entry.arguments?.getString("imageUri"),
                 onBack = { navController.popBackStack() }
             )
         }
-
 
         // ==========================
 // NAV HOST INTEGRASI PLANT CARE
