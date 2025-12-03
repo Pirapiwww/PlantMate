@@ -23,9 +23,19 @@ import com.example.plantmate.ui.components.NewsCard
 fun PlantNewsScreen(
     viewModel: NewsViewModel = viewModel(),
     onBack: () -> Unit
-    ) {
+) {
     val newsList = viewModel.newsList
     val isLoading = viewModel.isLoading
+
+    // Pagination states
+    val itemsPerPage = 4
+    var currentPage by remember { mutableStateOf(1) }
+    val totalPages = (newsList.size + itemsPerPage - 1) / itemsPerPage
+
+    // Slice item yang mau ditampilkan
+    val pagedItems = newsList
+        .drop((currentPage - 1) * itemsPerPage)
+        .take(itemsPerPage)
 
     Column(
         modifier = Modifier
@@ -33,7 +43,7 @@ fun PlantNewsScreen(
             .background(Color.White)
     ) {
 
-        // Top Bar
+        // Top Bar (unchanged)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,9 +81,7 @@ fun PlantNewsScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // ================
-        //   LOADING STATE
-        // ================
+        // Loading State
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -82,16 +90,78 @@ fun PlantNewsScreen(
                 CircularProgressIndicator()
             }
         } else {
-            // ====================
-            //     LIST BERITA
-            // ====================
+
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
             ) {
-                items(newsList) { news ->
+                items(pagedItems) { news ->
                     NewsCard(news = news)
                 }
             }
+
+            // =====================
+            //    PAGINATION BAR
+            // =====================
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val windowSize = 3 // hanya 3 nomor
+
+                // Hitung start–end window
+                val half = windowSize / 2
+                var start = (currentPage - half).coerceAtLeast(1)
+                val end = (start + windowSize - 1).coerceAtMost(totalPages)
+                start = (end - windowSize + 1).coerceAtLeast(1)
+
+                // ==================
+                // BAGIAN KIRI
+                // ==================
+                if (start > 1) {
+                    TextButton(onClick = { currentPage = 1 }) {
+                        Text("1")
+                    }
+                    Text(
+                        text = "…",
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+                    )
+                }
+
+                // ==================
+                // WINDOW (3 nomor)
+                // ==================
+                for (i in start..end) {
+                    TextButton(onClick = { currentPage = i }) {
+                        Text(
+                            text = i.toString(),
+                            color = if (i == currentPage)
+                                MaterialTheme.colorScheme.primary
+                            else Color.Black
+                        )
+                    }
+                }
+
+                // ==================
+                // BAGIAN KANAN
+                // ==================
+                if (end < totalPages) {
+                    Text(
+                        text = "…",
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+                    )
+                    TextButton(onClick = { currentPage = totalPages }) {
+                        Text(
+                            text = totalPages.toString(),
+                            color = Color.Black // end tidak pakai warna khusus
+                        )
+                    }
+                }
+            }
+
         }
     }
 }
