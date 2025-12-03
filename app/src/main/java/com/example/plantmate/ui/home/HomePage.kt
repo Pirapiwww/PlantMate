@@ -16,103 +16,128 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.plantmate.R
 import com.example.plantmate.data.DataSource
 
 import com.example.plantmate.ui.components.FeatureList
+import com.example.plantmate.ui.components.BottomNavBar
 
 @Composable
-fun PlantHomeScreen() {
+fun PlantHomeScreen(navController: NavHostController) {
 
     var search by remember { mutableStateOf("") }
+    val featureNavItems = DataSource().loadFeature()
 
-    Column(
+    // bottom navbar
+    var selectedNav by remember { mutableStateOf(0) }
+    val navbarItems = DataSource().loadNavbar()
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
 
-        // ---------------------- BANNER DENGAN SEARCH DI ATASNYA ----------------------
-        Box(
+        // ===================== CONTENT SCROLL =====================
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
+                .fillMaxSize()
+                .padding(bottom = 80.dp)   // beri space agar tidak ketutup bottom bar
         ) {
 
-            // Banner Image
-            Image(
-                painter = painterResource(id = R.drawable.img_news1),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            // Search & Profile overlay di atas gambar
-            Row(
+            // ---------------------- BANNER ----------------------
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 36.dp, start = 16.dp, end = 16.dp)
-                    .align(Alignment.TopCenter),
-                verticalAlignment = Alignment.CenterVertically
+                    .height(200.dp)
             ) {
 
-                OutlinedTextField(
-                    value = search,
-                    onValueChange = { search = it },
-                    placeholder = { Text("Search") },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp)
-                        .background(Color.White, RoundedCornerShape(50)),  // background putih solid
-                    shape = RoundedCornerShape(50),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-
-                        focusedBorderColor = Color.Transparent,   // hilangkan border
-                        unfocusedBorderColor = Color.Transparent,
-                        cursorColor = Color.Black
-                    )
+                Image(
+                    painter = painterResource(id = R.drawable.home_img),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
-
-                // Profile Button (tanpa background)
-                Box(
+                Row(
                     modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .padding(top = 36.dp, start = 16.dp, end = 16.dp)
+                        .align(Alignment.TopCenter),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("P", color = Color.Black)
+
+                    OutlinedTextField(
+                        value = search,
+                        onValueChange = { search = it },
+                        placeholder = { Text("Search") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                            .background(Color.White, RoundedCornerShape(50)),
+                        shape = RoundedCornerShape(50),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .background(Color.White),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("P", color = Color.Black)
+                    }
                 }
             }
+
+            // ---------------------- MENU 4 FITUR ----------------------
+            FeatureList(
+                featureList = featureNavItems,      // List<FeatureIcon>
+                onFeatureClick = { feature ->
+                    when (feature.route) {       // route dari model FeatureIcon
+                        "plantJournal" -> navController.navigate("plantJournal")
+                        "plantLens"      -> navController.navigate("plantLens")
+                        "plantEncyclopedia"      -> navController.navigate("plantEncyclopedia")
+                        "plantNews"      -> navController.navigate("plantNews")
+                        else            -> {}
+                    }
+                }
+            )
+
+            // ---------------------- YOUR JOURNAL ----------------------
+            HomeSectionTitle("Your Journal")
+            HomeCardPlaceholder()
+
+            // ---------------------- YOUR BOOKMARK ----------------------
+            HomeSectionTitle("Your Bookmark")
+            HomeCardPlaceholder()
+
+            // ---------------------- LATEST PLANT NEWS ----------------------
+            HomeSectionTitle("Latest Plant News")
         }
 
-        // ---------------------- MENU 4 FITUR ----------------------
-        FeatureList(
-            featureList = DataSource().loadFeature(),
+        // ===================== BOTTOM NAVIGATION =====================
+        BottomNavBar(
+            navbarItems = navbarItems,
+            selectedIndex = selectedNav,
+            onItemSelected = { selectedNav = it },
+            navController = navController,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
-
-        // ---------------------- YOUR JOURNAL ----------------------
-        HomeSectionTitle("Your Journal")
-
-        HomeCardPlaceholder()
-
-        // ---------------------- YOUR BOOKMARK ----------------------
-        HomeSectionTitle("Your Bookmark")
-
-        HomeCardPlaceholder()
-
-        // ---------------------- LATEST PLANT NEWS ----------------------
-        HomeSectionTitle("Latest Plant News")
-        // news card row
-
     }
 }
+
 
 @Composable
 fun HomeSectionTitle(text: String) {
@@ -141,8 +166,4 @@ fun HomeCardPlaceholder() {
     Spacer(modifier = Modifier.height(14.dp))
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PreviewPlantHomeScreen() {
-    PlantHomeScreen()
-}
+

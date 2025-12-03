@@ -1,4 +1,4 @@
-package com.example.plantmate.ui.plantjournal
+package com.example.plantmate.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +28,7 @@ fun PlantCategoryDropdown() {
 
     val categories = listOf("Ornamental", "Vegetable", "Fruit", "Other")
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.Companion.fillMaxWidth()) {
 
         // Dropdown
         ExposedDropdownMenuBox(
@@ -41,7 +41,7 @@ fun PlantCategoryDropdown() {
                 readOnly = true,
                 label = { Text("Plant Category") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .menuAnchor()
                     .fillMaxWidth()
             )
@@ -69,7 +69,7 @@ fun PlantCategoryDropdown() {
                 value = customCategory,
                 onValueChange = { customCategory = it },
                 label = { Text("Specify Category") },
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             )
@@ -87,7 +87,7 @@ fun GrowingMediaDropdown() {
     // Main categories
     val mediaCategories = listOf("Soil", "Container Media", "Other")
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.Companion.fillMaxWidth()) {
 
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -99,7 +99,7 @@ fun GrowingMediaDropdown() {
                 readOnly = true,
                 label = { Text("Growing Media") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .menuAnchor()
                     .fillMaxWidth()
             )
@@ -121,7 +121,7 @@ fun GrowingMediaDropdown() {
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.Companion.height(12.dp))
 
         // Additional input if user selects "Other"
         if (media == "Other") {
@@ -129,9 +129,8 @@ fun GrowingMediaDropdown() {
                 value = customMedia,
                 onValueChange = { customMedia = it },
                 label = { Text("Specify Media") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.Companion.fillMaxWidth()
             )
         }
     }
 }
-

@@ -31,20 +31,20 @@ import com.example.plantmate.R
 import java.io.File
 
 @Composable
-fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
+fun PlantLensInputScreen(
+    onBack: () -> Unit = {},
+    onAnalysis: (Uri?) -> Unit = {}
+) {
 
     val context = LocalContext.current
 
-    // === CAMERA PERMISSION ===
     val cameraPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (!granted) {
-                // Optional: tampilkan dialog atau snackbar
                 Toast.makeText(context, "Izin kamera diperlukan", Toast.LENGTH_SHORT).show()
             }
         }
 
-    // Jalankan sekali ketika composable muncul
     LaunchedEffect(Unit) {
         cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
     }
@@ -54,9 +54,6 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
     Column(
         modifier = Modifier.fillMaxSize()
     ){
-        // ============================
-        //          TOP BAR
-        // ============================
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,11 +61,15 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
                 .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier.size(24.dp)
-            )
+
+            // ▼▼ BACK BUTTON NAVIGASI ▼▼
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -79,7 +80,7 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.width(24.dp)) // menjaga text tetap center
+            Spacer(modifier = Modifier.width(24.dp))
         }
 
         Column(
@@ -96,8 +97,6 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
                     .padding(top = 8.dp, bottom = 16.dp)
             )
 
-
-            // === LIVE CAMERA PREVIEW ===
             CameraPreview(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -109,7 +108,6 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // === ANALISIS BUTTON ===
             Button(
                 onClick = {
                     val outputFile = File(
@@ -129,7 +127,7 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
                         ContextCompat.getMainExecutor(context),
                         object : ImageCapture.OnImageSavedCallback {
                             override fun onImageSaved(result: ImageCapture.OutputFileResults) {
-                                onAnalysis(uri)  // pindah ke halaman result
+                                onAnalysis(uri) // → pindah screen result
                             }
 
                             override fun onError(exc: ImageCaptureException) {
@@ -145,6 +143,7 @@ fun PlantLensInputScreen(onAnalysis: (Uri?) -> Unit = {}) {
         }
     }
 }
+
 
 @Composable
 fun CameraPreview(

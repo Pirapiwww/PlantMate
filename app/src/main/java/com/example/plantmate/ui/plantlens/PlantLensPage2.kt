@@ -13,12 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.plantmate.R
 
 @Composable
-fun PlantLensResultScreen() {
+fun PlantLensResultScreen(
+    imageUri: String?,
+    onBack: () -> Unit
+) {
 
     Column(
         modifier = Modifier
@@ -33,17 +36,16 @@ fun PlantLensResultScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // Back Button
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(24.dp)
-            )
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Title centered
             Text(
                 stringResource(id = R.string.plant_lens),
                 style = MaterialTheme.typography.titleMedium,
@@ -69,13 +71,20 @@ fun PlantLensResultScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // === GAMBAR DARI URI ===
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceVariant
-            ) {}
+            ) {
+                AsyncImage(
+                    model = imageUri,
+                    contentDescription = "Captured Plant Image",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -102,7 +111,7 @@ fun PlantLensResultScreen() {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { /* TODO */ },
+                onClick = { /* TODO Save bookmark */ },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiary
                 ),
@@ -111,13 +120,5 @@ fun PlantLensResultScreen() {
                 Text("Bookmark")
             }
         }
-
     }
-    
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PlantLensResultScreenPreview() {
-    PlantLensResultScreen()
 }

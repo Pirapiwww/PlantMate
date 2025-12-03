@@ -1,4 +1,4 @@
-package com.example.plantmate.ui.plantjournal
+package com.example.plantmate.ui.plantjournal.form
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.plantmate.R
+import com.example.plantmate.ui.components.DatePicker
+import com.example.plantmate.ui.components.GrowingMediaDropdown
+import com.example.plantmate.ui.components.PlantCategoryDropdown
 
 @Composable
 fun PreparationForm() {
@@ -25,47 +28,47 @@ fun PreparationForm() {
 
     Text(
         stringResource(id = R.string.plant_name),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = plantName,
         onValueChange = { plantName = it },
         label = { Text("Plant Name") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.Companion.fillMaxWidth()
     )
 
     Text(
         stringResource(id = R.string.preparation_date),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     DatePicker()
 
     Text(
         stringResource(id = R.string.plant_type),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     PlantCategoryDropdown()
 
     Text(
         stringResource(id = R.string.growing_media),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     GrowingMediaDropdown()
 
     Text(
         stringResource(id = R.string.note),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = notes,
         onValueChange = { notes = it },
         label = { Text(stringResource(id = R.string.note)) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.Companion.fillMaxWidth(),
         minLines = 6
     )
 }

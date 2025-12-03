@@ -1,4 +1,4 @@
-package com.example.plantmate.ui.plantjournal
+package com.example.plantmate.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -18,6 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +35,7 @@ fun DatePicker() {
         onValueChange = {},
         readOnly = true,
         label = { Text("Select Date") },   // ← placeholder fixed
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.Companion.fillMaxWidth(),
         trailingIcon = {
             IconButton(onClick = { openDialog = true }) {
                 Icon(
@@ -51,8 +54,8 @@ fun DatePicker() {
                     onClick = {
                         val millis = datePickerState.selectedDateMillis
                         if (millis != null) {
-                            val formatter = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
-                            date = formatter.format(java.util.Date(millis))
+                            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            date = formatter.format(Date(millis))
                         }
                         openDialog = false
                     }

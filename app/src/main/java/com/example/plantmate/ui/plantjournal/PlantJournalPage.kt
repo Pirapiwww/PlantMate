@@ -13,16 +13,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.plantmate.R
+import com.example.plantmate.ui.plantjournal.form.PlantingForm
+import com.example.plantmate.ui.plantjournal.form.PreparationForm
+import com.example.plantmate.ui.plantjournal.form.TreatmentForm
 
 
 @Composable
-fun PlantJournalScreen() {
+fun PlantJournalScreen(
+    onBack: () -> Unit
+) {
 
     var selectedStage by remember { mutableStateOf("Planting") }
     val stageOptions = listOf("Preparation", "Planting", "Treatment")
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -38,11 +44,13 @@ fun PlantJournalScreen() {
                 .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier.size(24.dp)
-            )
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -128,8 +136,3 @@ fun StageDropdown(selected: String, options: List<String>, onSelected: (String) 
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PlantJournalScreenPreview() {
-    PlantJournalScreen()
-}

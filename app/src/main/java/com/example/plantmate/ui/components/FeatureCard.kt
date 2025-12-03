@@ -2,6 +2,8 @@ package com.example.plantmate.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,36 +31,37 @@ import com.example.plantmate.model.FeatureIcon
 @Composable
 fun FeatureList(
     featureList: List<FeatureIcon>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onFeatureClick: (FeatureIcon) -> Unit   // ⬅ callback baru
 ) {
-    androidx.compose.foundation.lazy.LazyRow(
-        modifier = modifier
-            .fillMaxWidth(),
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         items(featureList) { feature ->
             FeatureCard(
                 feature = feature,
-                modifier = Modifier
-                    .padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                onClick = onFeatureClick
             )
         }
     }
 }
 
+
 @Composable
 fun FeatureCard(
     feature: FeatureIcon,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (FeatureIcon) -> Unit
 ) {
     Column(
         modifier = modifier
-            .width(85.dp)
-            .padding(4.dp),
+            .width(75.dp)
+            .clickable { onClick(feature) },   // ⬅ klik
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Icon box
         Box(
             modifier = Modifier
                 .size(60.dp)
@@ -74,7 +77,6 @@ fun FeatureCard(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        // Title
         Text(
             text = stringResource(feature.featureTitle),
             style = MaterialTheme.typography.bodySmall.copy(
@@ -85,4 +87,3 @@ fun FeatureCard(
         )
     }
 }
-

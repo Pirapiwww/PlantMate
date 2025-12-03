@@ -1,4 +1,4 @@
-package com.example.plantmate.ui.plantjournal
+package com.example.plantmate.ui.plantjournal.form
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,100 +28,100 @@ fun TreatmentForm() {
 
     Text(
         stringResource(id = R.string.plant_name),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = plantName,
         onValueChange = { plantName = it },
         label = { Text("Nama Tanaman") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.Companion.fillMaxWidth()
     )
 
     Text(
         stringResource(id = R.string.treatment_date),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = noteDate,
         onValueChange = { noteDate = it },
         label = { Text("Tanggal Catatan") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.Companion.fillMaxWidth()
     )
 
     Text(
         stringResource(id = R.string.plant_condition),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = plantCondition,
         onValueChange = { plantCondition = it },
         label = { Text("Kondisi Tanaman") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.Companion.fillMaxWidth()
     )
 
     Text(
         stringResource(id = R.string.watering),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = watering,
         onValueChange = { watering = it },
         label = { Text("Penyiraman") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.Companion.fillMaxWidth()
     )
 
     Text(
         stringResource(id = R.string.fertilizer),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = fertilizer,
         onValueChange = { fertilizer = it },
         label = { Text("Pupuk") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.Companion.fillMaxWidth()
     )
 
     Text(
         stringResource(id = R.string.problem_details),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = issue,
         onValueChange = { issue = it },
         label = { Text("Masalah / Gejala") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.Companion.fillMaxWidth(),
         minLines = 4
     )
 
     Text(
         stringResource(id = R.string.solution_details),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = solution,
         onValueChange = { solution = it },
         label = { Text("Tindakan / Solusi") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.Companion.fillMaxWidth(),
         minLines = 4
     )
 
     Text(
         stringResource(id = R.string.note),
-        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = notes,
         onValueChange = { notes = it },
         label = { Text("Catatan Tambahan") },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.Companion.fillMaxWidth(),
         minLines = 6
     )
 }

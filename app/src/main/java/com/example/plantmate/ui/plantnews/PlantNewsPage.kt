@@ -21,8 +21,9 @@ import com.example.plantmate.ui.components.NewsCard
 
 @Composable
 fun PlantNewsScreen(
-    viewModel: NewsViewModel = viewModel()   // ← ViewModel otomatis diambil
-) {
+    viewModel: NewsViewModel = viewModel(),
+    onBack: () -> Unit
+    ) {
     val newsList = viewModel.newsList
     val isLoading = viewModel.isLoading
 
@@ -40,11 +41,13 @@ fun PlantNewsScreen(
                 .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                modifier = Modifier.size(24.dp)
-            )
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
