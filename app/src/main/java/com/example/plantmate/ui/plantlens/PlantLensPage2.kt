@@ -1,5 +1,6 @@
 package com.example.plantmate.ui.plantlens
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -7,27 +8,124 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.plantmate.R
+import com.example.plantmate.data.api.PlantIdApi
+import com.example.plantmate.data.viewmodel.uriToBase64
+import com.example.plantmate.model.PlantIdRequest
+import kotlinx.coroutines.launch
 
 @Composable
 fun PlantLensResultScreen(
     imageUri: String?,
+    apiKey: String,
+    plantIdApi: PlantIdApi,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
+    var analysisText by remember { mutableStateOf("Menunggu analisis...") }
+    var isLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(imageUri) {
+        if (imageUri != null) {
+            isLoading = true
+
+            val base64 = uriToBase64(context, Uri.parse(imageUri))
+
+            val request = PlantIdRequest(
+                api_key = apiKey,
+                images = listOf(base64)
+            )
+
+            scope.launch {
+                try {
+                    val response = plantIdApi.identifyPlant(request)
+
+                    if (response.isSuccessful) {
+                        val result = response.body()?.result
+
+                        analysisText = buildString {
+
+                            if (result == null) {
+                                append("Tidak ada hasil analisis.\n")
+                                return@buildString
+                            }
+
+                            // ========== HEALTH STATUS ==========
+                            val isHealthy = result.is_healthy?.binary
+                            val healthProb = result.is_healthy?.probability
+
+                            append("Status Kesehatan Tanaman:\n")
+
+                            when (isHealthy) {
+                                true -> append("🌱 Sehat (Probabilitas: ${
+                                    String.format("%.2f", healthProb ?: 0.0)
+                                })\n\n")
+
+                                false -> append("⚠️ Tidak Sehat (Probabilitas: ${
+                                    String.format("%.2f", healthProb ?: 0.0)
+                                })\n\n")
+
+                                null -> append("Tidak dapat menentukan kesehatan.\n\n")
+                            }
+
+                            // ========== DISEASE LIST ==========
+                            if (result.diseases.isNullOrEmpty()) {
+                                append("Tidak ditemukan penyakit.\n\n")
+                            } else {
+                                append("Kemungkinan Penyakit:\n")
+                                result.diseases.forEach {
+                                    append("- ${it.name ?: "Unknown"} (Prob: ${
+                                        String.format("%.2f", it.probability ?: 0.0)
+                                    })\n")
+                                }
+                                append("\n")
+                            }
+
+                            // ========== CLASSIFICATION ==========
+                            val species = result.classification?.suggested_species
+
+                            append("Klasifikasi Tumbuhan:\n")
+                            if (species.isNullOrEmpty()) {
+                                append("Tidak dapat mengidentifikasi spesies.")
+                            } else {
+                                species.take(3).forEach {
+                                    append("- ${it.name ?: "Unknown"} (Prob: ${
+                                        String.format("%.2f", it.probability ?: 0.0)
+                                    })\n")
+                                }
+                            }
+                        }
+                    } else {
+                        analysisText = "Gagal menganalisis. (HTTP ${response.code()})\n${response.errorBody()?.string()}"
+                    }
+
+                } catch (e: Exception) {
+                    analysisText = "Gagal menganalisis gambar.\n${e.message}"
+                }
+
+                isLoading = false
+            }
+        }
+    }
+
+    // =================== UI =====================
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
+        // AppBar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -35,7 +133,6 @@ fun PlantLensResultScreen(
                 .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -56,6 +153,7 @@ fun PlantLensResultScreen(
             Spacer(modifier = Modifier.width(24.dp))
         }
 
+        // Content
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,13 +163,11 @@ fun PlantLensResultScreen(
 
             Text(
                 text = "Gambar Bagian Tumbuhan",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 8.dp)
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // === GAMBAR DARI URI ===
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,10 +198,13 @@ fun PlantLensResultScreen(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
-                Text(
-                    text = "Hasil Analisis disini",
-                    modifier = Modifier.padding(16.dp)
-                )
+                Box(modifier = Modifier.padding(16.dp)) {
+                    if (isLoading) {
+                        CircularProgressIndicator()
+                    } else {
+                        Text(text = analysisText)
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
