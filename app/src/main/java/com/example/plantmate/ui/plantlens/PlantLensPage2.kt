@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,25 +17,46 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.plantmate.R
+import com.example.plantmate.YourApp
 import com.example.plantmate.data.api.PlantIdApi
+import com.example.plantmate.data.viewmodel.local.LensLocalViewModel
+import com.example.plantmate.data.viewmodel.local.ViewModelFactory
 import com.example.plantmate.data.viewmodel.uriToBase64
 import com.example.plantmate.model.PlantIdRequest
 import kotlinx.coroutines.launch
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun PlantLensResultScreen(
     imageUri: String?,
     apiKey: String,
     plantIdApi: PlantIdApi,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    navController: NavHostController
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     var analysisText by remember { mutableStateOf("Menunggu analisis...") }
     var isLoading by remember { mutableStateOf(false) }
+
+    var title by rememberSaveable { mutableStateOf("") }
+    var titleError by rememberSaveable { mutableStateOf(false) }
+
+    val viewModel: LensLocalViewModel = viewModel(
+        factory = ViewModelFactory(
+            (context.applicationContext as YourApp).encyclopediaLocalRepository,
+            (context.applicationContext as YourApp).newsLocalRepository,
+            (context.applicationContext as YourApp).lensLocalRepository
+        )
+    )
 
     LaunchedEffect(imageUri) {
         if (imageUri != null) {
@@ -123,7 +145,7 @@ fun PlantLensResultScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // AppBar
         Row(
@@ -133,13 +155,28 @@ fun PlantLensResultScreen(
                 .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBack) {
+            IconButton(
+                onClick = {
+                    imageUri?.let {
+                        try {
+                            val file = File(Uri.parse(it).path ?: "")
+                            if (file.exists()) {
+                                file.delete()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                    onBack()
+                }
+            ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
                     modifier = Modifier.size(24.dp)
                 )
             }
+
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -209,8 +246,64 @@ fun PlantLensResultScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            Text(
+                text = "Judul Catatan",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = title,
+                onValueChange = {
+                    title = it
+                    if (it.isNotBlank()) titleError = false
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Judul Catatan *") },
+                placeholder = { Text("Contoh: Daun cabai menguning") },
+                isError = titleError,
+                singleLine = true
+            )
+
+            if (titleError) {
+                Text(
+                    text = "Judul wajib diisi",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Button(
-                onClick = { /* TODO Save bookmark */ },
+                onClick = {
+                    if (title.isBlank()) {
+                        titleError = true
+                        return@Button
+                    }
+
+                    val savedDate = SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm:ss",
+                        Locale.getDefault()
+                    ).format(Date())
+
+                    viewModel.addLens(
+                        lensImage = imageUri,
+                        title = title,
+                        result = analysisText,
+                        savedDate = savedDate
+                    )
+
+                    navController.navigate("bookmark?tab=0") {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
+                enabled = title.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiary
                 ),
@@ -218,6 +311,7 @@ fun PlantLensResultScreen(
             ) {
                 Text("Bookmark")
             }
+
         }
     }
 }

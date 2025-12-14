@@ -1,18 +1,19 @@
 package com.example.plantmate.data.repository
 
-import com.example.plantmate.data.api.ApiClient
+import com.example.plantmate.data.api.PerenualApiClient
+import com.example.plantmate.data.local.dao.EncyclopediaDao
 import com.example.plantmate.model.PlantDetail
 import com.example.plantmate.model.PlantListItem
 import com.example.plantmate.model.CareGuideResponse
 
-class EncyclopediaRepository {
+class EncyclopediaRepository(encyclopediaDao: EncyclopediaDao) {
 
     private val key = "sk-c3l3692db5ae5db7313752"
 
     suspend fun searchPlants(query: String): List<PlantListItem> {
         if (query.isBlank()) return emptyList()
 
-        val resp = ApiClient.api.searchSpecies(
+        val resp = PerenualApiClient.api.searchSpecies(
             apiKey = key,
             query = query
         )
@@ -20,14 +21,14 @@ class EncyclopediaRepository {
     }
 
     suspend fun getPlantDetail(id: Int): PlantDetail {
-        return ApiClient.api.getSpeciesDetails(
+        return PerenualApiClient.api.getSpeciesDetails(
             id = id,
             apiKey = key
         )
     }
 
     suspend fun getPlantCareGuide(id: Int): CareGuideResponse {
-        return ApiClient.api.getSpeciesCareGuide(
+        return PerenualApiClient.api.getSpeciesCareGuide(
             speciesId = id,
             apiKey = key
         )

@@ -44,7 +44,7 @@ fun PlantEncyclopediaSearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         // =========================
@@ -140,7 +140,11 @@ fun PlantEncyclopediaSearchScreen(
             }
 
             else -> {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
                     items(results) { plant ->
                         PlantResultCard(
                             item = plant,

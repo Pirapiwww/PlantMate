@@ -5,70 +5,98 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.plantmate.R
-import com.example.plantmate.ui.components.DatePicker
-import com.example.plantmate.ui.components.GrowingMediaDropdown
-import com.example.plantmate.ui.components.PlantCategoryDropdown
+import com.example.plantmate.data.DataSource
+import com.example.plantmate.ui.components.dropdowns.JournalDropdown
 
 @Composable
-fun PreparationForm() {
+fun PreparationForm(
+    plantName: String,
+    plantType: String,
+    plantSource: String,
+    plantSoil: String,
+    plantFertilizer: String,
+    notes: String,
+    onValueChange: (field: String, value: String) -> Unit
+) {
 
-    var date by remember { mutableStateOf("") }
-    var plantName by remember { mutableStateOf("") }
-    var plantType by remember { mutableStateOf("") }
-    var media by remember { mutableStateOf("") }
-    var notes by remember { mutableStateOf("") }
+    val ds = DataSource()
 
+    // Plant Name
     Text(
-        stringResource(id = R.string.plant_name),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        text = stringResource(R.string.plant_name),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = plantName,
-        onValueChange = { plantName = it },
-        label = { Text("Plant Name") },
-        modifier = Modifier.Companion.fillMaxWidth()
+        onValueChange = { onValueChange("plantName", it) },
+        label = { Text(stringResource(R.string.plant_name)) },
+        modifier = Modifier.fillMaxWidth()
     )
 
+    // Plant Type
     Text(
-        stringResource(id = R.string.preparation_date),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        text = stringResource(R.string.plant_type),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
 
-    DatePicker()
-
-    Text(
-        stringResource(id = R.string.plant_type),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+    JournalDropdown(
+        placeholder = stringResource(R.string.select_x, stringResource(R.string.plant_type)),
+        items = ds.loadPlantType(),
+        onSelected = { onValueChange("plantType", it) }
     )
 
-    PlantCategoryDropdown()
-
+    // Plant Source
     Text(
-        stringResource(id = R.string.growing_media),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        text = stringResource(R.string.source),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
 
-    GrowingMediaDropdown()
+    JournalDropdown(
+        placeholder = stringResource(R.string.select_x, stringResource(R.string.source)),
+        items = ds.loadSource(),
+        onSelected = { onValueChange("plantSource", it) }
+    )
 
+    // Soil Type
     Text(
-        stringResource(id = R.string.note),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        text = stringResource(R.string.soil_type),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+
+    JournalDropdown(
+        placeholder = stringResource(R.string.select_x, stringResource(R.string.soil_type)),
+        items = ds.loadSoilType(),
+        onSelected = { onValueChange("plantSoil", it) }
+    )
+
+    // Fertilizer Type
+    Text(
+        text = stringResource(R.string.fertilizer_type),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+
+    JournalDropdown(
+        placeholder = stringResource(R.string.select_x, stringResource(R.string.fertilizer_type)),
+        items = ds.loadFertilizerType(), // perbaikan
+        onSelected = { onValueChange("plantFertilizer", it) }
+    )
+
+    // Notes
+    Text(
+        text = stringResource(R.string.note),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
 
     OutlinedTextField(
         value = notes,
-        onValueChange = { notes = it },
-        label = { Text(stringResource(id = R.string.note)) },
-        modifier = Modifier.Companion.fillMaxWidth(),
+        onValueChange = { onValueChange("notes", it) },
+        label = { Text(stringResource(R.string.note)) },
+        modifier = Modifier.fillMaxWidth(),
         minLines = 6
     )
 }

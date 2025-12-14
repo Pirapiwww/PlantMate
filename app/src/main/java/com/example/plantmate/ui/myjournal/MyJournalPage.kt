@@ -28,7 +28,11 @@ fun MyJournalScreen(navController: NavHostController) {
     val tabs = listOf("Preparation", "Planting", "Treatment")
     val navbarItems = DataSource().loadNavbar()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
         Column(
             modifier = Modifier.fillMaxSize()
@@ -122,11 +126,10 @@ fun MyJournalScreen(navController: NavHostController) {
         // ============================
         BottomNavBar(
             navbarItems = navbarItems,
-            selectedIndex = selectedNav,
-            onItemSelected = { selectedNav = it },
             navController = navController,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
+
     }
 }
 

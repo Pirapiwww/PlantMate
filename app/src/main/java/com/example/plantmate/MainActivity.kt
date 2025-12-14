@@ -1,52 +1,62 @@
 package com.example.plantmate
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
+import com.example.plantmate.data.viewmodel.local.ViewModelFactory
+import com.example.plantmate.navigation.NavbarApp
 import com.example.plantmate.ui.theme.PlantMateTheme
 
-import com.example.plantmate.ui.navigation.NavbarApp
+val LocalViewModelFactory = staticCompositionLocalOf<ViewModelProvider.Factory> {
+    error("No ViewModelFactory provided")
+}
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("ViewModelConstructorInComposable")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Supaya bottom Navbar (tab, home, back) bawaan hp disembunyikan
+        // Agar Compose bisa pakai seluruh screen (tanpa inset otomatis)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-            // Hide ONLY navigation bar
-            controller.hide(WindowInsetsCompat.Type.navigationBars())
+        // Controller untuk mengatur visibility sistem bar
+        val insetsController =
+            WindowInsetsControllerCompat(window, window.decorView).apply {
 
-            // Allow swipe from bottom to show it temporarily
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
+                // 🟢 Hide NAVIGATION BAR saja
+                hide(WindowInsetsCompat.Type.navigationBars())
+
+                // Mode immersive — swipe untuk muncul sementara
+                systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+
+        val app = application as YourApp
+
+        val factory = ViewModelFactory(
+            encyclopediaLocalRepository = app.encyclopediaLocalRepository,
+            newsLocalRepository = app.newsLocalRepository,
+            lensLocalRepository = app.lensLocalRepository
+            )
 
         setContent {
             PlantMateTheme {
+                CompositionLocalProvider(LocalViewModelFactory provides factory) {
+                    val navController = rememberNavController()
 
-                val navController = rememberNavController()
-                NavbarApp(navController)
-
+                    NavbarApp(
+                        navController = navController,
+                        database = app.database
+                    )
+                }
             }
         }
     }
 }
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PlantJournalScreenPreview() {
-    PlantMateTheme {
-
-    }
-}
-

@@ -6,7 +6,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object ApiClient {
+object PerenualApiClient {
     private const val BASE_URL = "https://perenual.com/api/"
 
 

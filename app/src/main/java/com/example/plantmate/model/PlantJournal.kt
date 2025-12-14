@@ -1,33 +1,38 @@
 package com.example.plantmate.model
 
-import androidx.annotation.StringRes
+import androidx.annotation.DrawableRes
+
+data class Journal (
+    @DrawableRes val image: Int,
+    val journalName: String,
+    val date: String
+)
 
 data class JournalPlanting (
-    @StringRes val phase: Int,
-    @StringRes val seeds: Int,
-    @StringRes val date: Int,
-    @StringRes val how: Int,
-    @StringRes val conditions: Int,
-    @StringRes val note: Int
+    val phase: String,
+    val plantName: String,
+    val method: String,
+    val frequency: String,
+    val amount: String,
+    val note: String
 )
 
 data class JournalPreparation (
-    @StringRes val phase: Int,
-    @StringRes val date: Int,
-    @StringRes val plantName: Int,
-    @StringRes val plantType: Int,
-    @StringRes val media: Int,
-    @StringRes val note: Int
+    val phase: String,
+    val plantName: String,
+    val plantType: String,
+    val source: String,
+    val soilType: String,
+    val fertilizerType: String,
+    val note: String
 )
 
 data class JournalTreatment (
-    @StringRes val phase: Int,
-    @StringRes val date: Int,
-    @StringRes val plantCondition: Int,
-    @StringRes val watering: Int,
-    @StringRes val fertilizer: Int,
-    @StringRes val problem: Int,
-    @StringRes val solution: Int,
-    @StringRes val note: Int
-
+    val phase: String,
+    val plantName: String,
+    val plantCondition: String,
+    val treatmentType: String,
+    val problem: String,
+    val solution: String,
+    val note: String
 )

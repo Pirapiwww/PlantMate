@@ -6,14 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,11 +33,14 @@ fun FeatureList(
     modifier: Modifier = Modifier,
     onFeatureClick: (FeatureIcon) -> Unit   // ⬅ callback baru
 ) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        items(featureList) { feature ->
+        featureList.forEach { feature ->
             FeatureCard(
                 feature = feature,
                 modifier = Modifier.padding(8.dp),
@@ -83,7 +85,9 @@ fun FeatureCard(
                 color = Color.DarkGray,
                 fontWeight = FontWeight.Medium
             ),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            minLines = 2
         )
     }
 }

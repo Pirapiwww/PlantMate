@@ -1,0 +1,148 @@
+<resources>
+    <string name="app_name">PlantMate</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="no_image">Tidak Ada Gambar</string>
+
+    <!-- Bottom Navbar -->
+    <string name="navbar_home">Home</string>
+    <string name="navbar_journal">Journal</string>
+    <string name="navbar_bookmark">Bookmark</string>
+    <string name="navbar_profile">Profile</string>
+
+    <!-- Feature -->
+    <string name="plant_journal">Plant Journal</string>
+    <string name="plant_lens">Plant Lens</string>
+    <string name="plant_encyclopedia">Plant Encyclopedia</string>
+    <string name="plant_news">Plant News</string>
+
+    <!-- Menu Home -->
+    <string name="my_journal">Jurnal Saya</string>
+    <string name="encyclopedia_bookmark">Plant Encyclopedia Tersimpan</string>
+    <string name="lens_bookmark">Plant Lens Tersimpan</string>
+    <string name="latest_news">Plant News Terbaru</string>
+
+    <string name="detail">Selengkapnya >></string>
+
+    <!-- Menu My Journal -->
+    <string name="preparation">Persiapan</string>
+    <string name="planting">Penanaman</string>
+    <string name="treatment">Perawatan</string>
+
+    <!-- Menu Profile -->
+    <string name="account">Detail Akun</string>
+    <string name="settings">Pengaturan</string>
+    <string name="dark_mode">Mode Gelap</string>
+    <string name="language">Ubah Bahasa</string>
+    <string name="logout">Keluar</string>
+
+    <!-- Plant Journal Feature -->
+    <string name="select_journal">Pilih Jurnal</string>
+    <string name="add">Tambah Jurnal Baru</string>
+    <string name="save">Simpan ke My Journal</string>
+    <string name="journal_format">Jurnal#</string>
+    <string name="created">Dibuat pada: </string>
+
+    <string name="phase">Fase</string>
+    <string name="select_phase">Pilih Fase</string>
+    <string name="note">Catatan Tambahan</string>
+    <string name="plant_name">Nama Tanaman</string>
+    <string name="select_x">Pilih %1$s</string>
+
+    <!-- Preparation -->
+
+    <string name="plant_type">Jenis Tanaman</string>
+    <!-- Plant type dropdown -->
+    <string name="vegetable">Sayur</string>
+    <string name="ornamental">Tanaman Hias</string>
+    <string name="herb">Herba</string>
+    <string name="fruit">Buah</string>
+
+    <string name="source">Sumber</string>
+    <!-- Source dropdown -->
+    <string name="seed">Biji</string>
+    <string name="sapling">Bibit/Tunas</string>
+    <string name="young_plant">Tanaman Kecil</string>
+    <string name="cutting">Stek/Cangkokan</string>
+
+    <string name="soil_type">Jenis Tanah</string>
+    <!-- Soil Type dropdown -->
+    <string name="humus">Humus</string>
+    <string name="sand_mix">Campuran Pasir</string>
+    <string name="potting_mix">Media Tanam Pot</string>
+
+    <string name="fertilizer_type">Jenis Pupuk</string>
+    <!-- Fertilizer Type dropdown -->
+    <string name="compost">Kompos</string>
+    <string name="organic">Pupuk Organik</string>
+    <string name="npk">NPK</string>
+
+
+    <!-- Planting -->
+
+    <string name="method">Metode Penanaman</string>
+    <!-- Planting Method dropdown -->
+    <string name="soil">Langsung di Tanah</string>
+    <string name="container">Wadah</string>
+    <string name="hydroponic">Hidroponik</string>
+
+    <string name="location">Lokasi Penanaman</string>
+    <!-- Planting Location dropdown -->
+    <string name="indoor">Dalam Ruangan</string>
+    <string name="outdoor">Luar Ruangan</string>
+    <string name="pot">Pot</string>
+    <string name="planting_bed">Lahan Tanam</string>
+
+    <string name="frequency">Frekuensi Penyiraman</string>
+    <!-- Watering Frequency dropdown -->
+    <string name="low_frequency">1x/hari</string>
+    <string name="medium_frequency">2x/hari</string>
+    <string name="high_frequency">3x/hari</string>
+    <string name="veryHigh_frequency">Lebih dari 3x/hari</string>
+
+    <string name="amount">Banyak Penyiraman</string>
+    <!-- Watering Amount dropdown -->
+    <string name="low_amount">100-200 ml/tanaman</string>
+    <string name="medium_amount">200-500 ml/tanaman</string>
+    <string name="high_amount">500-1000 ml/tanaman</string>
+    <string name="veryHigh_amount">Lebih dari 1000 ml/tanaman</string>
+
+    <!-- Treatment -->
+
+    <string name="plant_condition">Kondisi Tanaman</string>
+    <!-- Plant Condition dropdown -->
+    <string name="healthy">Sehat</string>
+    <string name="wilted">Layu</string>
+    <string name="pestDisease">Hama/Penyakit</string>
+    <string name="nutrient">Kurang Nutrisi</string>
+
+    <string name="treatment_type">Jenis Perawatan</string>
+    <!-- Plant Condition dropdown -->
+    <string name="fertilizing">Pemberian Pupuk</string>
+    <string name="watering_treatment">Penyiraman</string>
+    <string name="pruning_treatment">Pemangkasan</string>
+    <string name="pestDisease_control">Pengendalian Hama/Penyakit</string>
+
+    <string name="problem">Detail Masalah</string>
+    <string name="solution">Detail Solusi</string>
+
+    <!-- Plant Lens Feature -->
+    <string name="lens_note">Arahkan kamera ke daun atau bagian tanaman yang ingin di Analisis.</string>
+    <string name="lens_button">Analisi</string>
+    <string name="lens_image">Pratinjau Gambar</string>
+    <string name="lens_result">Hasil Analisi</string>
+
+    <!-- Plant Encyclopedia Feature -->
+    <string name="search">Cari Tanaman...</string>
+    <string name="search_result">Hasil Pencarian</string>
+    <string name="search_history">Histori Pencarian</string>
+    <string name="history_clear">Hapus</string>
+    <string name="search_no">Tidak Ada Hasil</string>
+    <string name="watering">Penyiraman</string>
+    <string name="sunlight">Sinar Matahari</string>
+    <string name="pruning">Pemangkasan</string>
+
+    <!-- Bookmark Feature -->
+    <string name="empty_encyclopedia">Tidak ada Plant Encyclopedia yang disimpan</string>
+    <string name="empty_lens">Tidak ada Plant Lens yang disimpan</string>
+
+</resources>

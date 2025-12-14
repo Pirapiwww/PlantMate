@@ -7,43 +7,92 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.example.plantmate.R
 import com.example.plantmate.ui.plantjournal.form.PlantingForm
 import com.example.plantmate.ui.plantjournal.form.PreparationForm
 import com.example.plantmate.ui.plantjournal.form.TreatmentForm
 
-
 @Composable
 fun PlantJournalScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit = {}
 ) {
 
-    var selectedStage by remember { mutableStateOf("Planting") }
-    val stageOptions = listOf("Preparation", "Planting", "Treatment")
+    var selectedTab by remember { mutableStateOf(0) }
 
+    // ---------- STATES ----------
+    var prepPlantName by remember { mutableStateOf("") }
+    var prepPlantType by remember { mutableStateOf("") }
+    var prepSource by remember { mutableStateOf("") }
+    var prepSoil by remember { mutableStateOf("") }
+    var prepFertilizer by remember { mutableStateOf("") }
+    var prepNotes by remember { mutableStateOf("") }
+
+    var plantName by remember { mutableStateOf("") }
+    var method by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+    var frequency by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var plantNotes by remember { mutableStateOf("") }
+
+    var treatName by remember { mutableStateOf("") }
+    var condition by remember { mutableStateOf("") }
+    var treatmentType by remember { mutableStateOf("") }
+    var problem by remember { mutableStateOf("") }
+    var solution by remember { mutableStateOf("") }
+    var treatNotes by remember { mutableStateOf("") }
+
+    val onValueChange: (String, String) -> Unit = { field, value ->
+        when (field) {
+            "prepPlantName" -> prepPlantName = value
+            "prepPlantType" -> prepPlantType = value
+            "prepSource" -> prepSource = value
+            "prepSoil" -> prepSoil = value
+            "prepFertilizer" -> prepFertilizer = value
+            "prepNotes" -> prepNotes = value
+
+            "plantName" -> plantName = value
+            "method" -> method = value
+            "location" -> location = value
+            "frequency" -> frequency = value
+            "amount" -> amount = value
+            "plantNotes" -> plantNotes = value
+
+            "treatName" -> treatName = value
+            "condition" -> condition = value
+            "treatmentType" -> treatmentType = value
+            "problem" -> problem = value
+            "solution" -> solution = value
+            "treatNotes" -> treatNotes = value
+        }
+    }
+
+    val topColor = Color(0xFFDDE6C7)
+    val activeColor = Color(0xFF6AA85B)      // hijau
+    val inactiveColor = Color.Black          // hitam
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
-        // ============================
+        // ================================
         //          TOP BAR
-        // ============================
+        // ================================
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFDDE6C7))
+                .background(topColor)
                 .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -55,84 +104,107 @@ fun PlantJournalScreen(
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                stringResource(id = R.string.plant_journal),
+                text = "Plant Journal",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.width(24.dp)) // menjaga text tetap center
+            Spacer(modifier = Modifier.width(24.dp))
         }
 
+        // ================================
+        //            TAB ROW
+        // ================================
+        TabRow(
+            selectedTabIndex = selectedTab,
+            containerColor = Color.White,
+            contentColor = activeColor,
 
-        // ============================
-        //  KONTEN (Boleh discroll)
-        // ============================
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+            // Hilangkan garis bawah bawaan TabRow
+            divider = {},
+
+            // Indicator custom
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    modifier = Modifier
+                        .tabIndicatorOffset(tabPositions[selectedTab]),
+                    color = activeColor,
+                    height = 3.dp
+                )
+            }
         ) {
 
-            StageDropdown(
-                selected = selectedStage,
-                options = stageOptions,
-                onSelected = { selectedStage = it }
-            )
+            val tabs = listOf("Preparation", "Planting", "Treatment")
 
-            Spacer(modifier = Modifier.height(16.dp))
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTab == index,
+                    onClick = { selectedTab = index },
+                    text = {
+                        Text(
+                            text = title,
+                            color = if (selectedTab == index) activeColor else inactiveColor
+                        )
+                    },
+                    // Tidak ada garis bawah tambahan di sini
+                    selectedContentColor = activeColor,
+                    unselectedContentColor = inactiveColor
+                )
+            }
+        }
 
-            when (selectedStage) {
-                "Preparation" -> PreparationForm()
-                "Planting" -> PlantingForm()
-                "Treatment" -> TreatmentForm()
+        // ================================
+        //        SCROLLABLE CONTENT
+        // ================================
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+                .weight(1f)
+        ) {
+
+            when (selectedTab) {
+
+                0 -> PreparationForm(
+                    plantName = prepPlantName,
+                    plantType = prepPlantType,
+                    plantSource = prepSource,
+                    plantSoil = prepSoil,
+                    plantFertilizer = prepFertilizer,
+                    notes = prepNotes,
+                    onValueChange = onValueChange
+                )
+
+                1 -> PlantingForm(
+                    plantName = plantName,
+                    method = method,
+                    location = location,
+                    frequency = frequency,
+                    amount = amount,
+                    notes = plantNotes,
+                    onValueChange = onValueChange
+                )
+
+                2 -> TreatmentForm(
+                    plantName = treatName,
+                    plantCondition = condition,
+                    treatmentType = treatmentType,
+                    problem = problem,
+                    solution = solution,
+                    notes = treatNotes,
+                    onValueChange = onValueChange
+                )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { /* TODO Save */ },
+                onClick = { /* TODO submit */ },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save Journal")
+                Text("Add to Journal")
             }
         }
     }
 }
-
-
-
-@Composable
-fun StageDropdown(selected: String, options: List<String>, onSelected: (String) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Column {
-        Text(
-            stringResource(id = R.string.phase),
-            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
-        )
-
-        Box {
-            OutlinedButton(
-                onClick = { expanded = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(selected)
-            }
-
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                options.forEach {
-                    DropdownMenuItem(
-                        text = { Text(it) },
-                        onClick = {
-                            onSelected(it)
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
-

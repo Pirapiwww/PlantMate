@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">PlantMate</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="no_image">No Image</string>
 
     <!-- Bottom Navbar -->
     <string name="navbar_home">Home</string>
@@ -15,7 +17,8 @@
 
     <!-- Menu Home -->
     <string name="my_journal">My Journal</string>
-    <string name="my_bookmark">My Bookmark</string>
+    <string name="encyclopedia_bookmark">Saved Plant Encyclopedia</string>
+    <string name="lens_bookmark">Saved Plant Lens</string>
     <string name="latest_news">Latest Plant News</string>
 
     <string name="detail">See Detail >></string>
@@ -26,61 +29,121 @@
     <string name="treatment">Treatment</string>
 
     <!-- Menu Profile -->
-
+    <string name="account">Account Details</string>
+    <string name="settings">Settings</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="language">Change language</string>
+    <string name="logout">Log Out</string>
 
     <!-- Plant Journal Feature -->
+    <string name="select_journal">Select Journal</string>
+    <string name="add">Add New Journal</string>
+    <string name="save">Save to My Journal</string>
+    <string name="journal_format">Journal#</string>
+    <string name="created">Created at: </string>
+
     <string name="phase">Phase</string>
+    <string name="select_phase">Select Phase</string>
     <string name="note">Additional Note</string>
-
-    <string name="preparation_date">Preparation Date</string>
     <string name="plant_name">Plant Name</string>
-    <string name="plant_type">Plant Category</string>
-    <string name="growing_media">Growing Media</string>
-    <string name="container">Container?</string>
+    <string name="select_x">Select %1$s</string>
 
-    <string name="seeds">Number of Seeds</string>
-    <string name="planting_date">Planting Date</string>
-    <string name="how_to_plant">How to Plant</string>
-    <string name="initial_conditions">Initial Conditions</string>
+    <!-- Preparation -->
+
+    <string name="plant_type">Plant Type</string>
+    <!-- Plant type dropdown -->
+    <string name="vegetable">Vegetable</string>
+    <string name="ornamental">Ornamental</string>
+    <string name="herb">Herb</string>
+    <string name="fruit">Fruit</string>
+
+    <string name="source">Source</string>
+    <!-- Source dropdown -->
+    <string name="seed">Seed</string>
+    <string name="sapling">Sapling</string>
+    <string name="young_plant">Young Plant</string>
+    <string name="cutting">Cutting</string>
+
+    <string name="soil_type">Soil Type</string>
+    <!-- Soil Type dropdown -->
+    <string name="humus">Humus</string>
+    <string name="sand_mix">Sand Mix</string>
+    <string name="potting_mix">Potting Mix</string>
+
+    <string name="fertilizer_type">Fertilizer Type</string>
+    <!-- Fertilizer Type dropdown -->
+    <string name="compost">Compost</string>
+    <string name="organic">Organic Fertilizer</string>
+    <string name="npk">NPK</string>
+
+
+    <!-- Planting -->
+
+    <string name="method">Planting Method</string>
+    <!-- Planting Method dropdown -->
+    <string name="soil">Direct to Soil</string>
+    <string name="container">Container</string>
+    <string name="hydroponic">Hydroponic</string>
+
+    <string name="location">Planting Location</string>
+    <!-- Planting location dropdown -->
+    <string name="indoor">Indoor</string>
+    <string name="outdoor">Outdoor</string>
+    <string name="pot">Pot</string>
+    <string name="planting_bed">Planting Bed</string>
+
+    <string name="frequency">Watering Frequency</string>
+    <!-- Watering Frequency dropdown -->
+    <string name="low_frequency">1x/day</string>
+    <string name="medium_frequency">2x/day</string>
+    <string name="high_frequency">3x/day</string>
+    <string name="veryHigh_frequency">More than 3x/day</string>
+
+    <string name="amount">Watering Amount</string>
+    <!-- Watering Amount dropdown -->
+    <string name="low_amount">100-200 ml/plant</string>
+    <string name="medium_amount">200-500 ml/plant</string>
+    <string name="high_amount">500-1000 ml/plant</string>
+    <string name="veryHigh_amount">More than 1000 ml/plant</string>
+
+    <!-- Treatment -->
 
     <string name="plant_condition">Plant Condition</string>
-    <string name="treatment_date">Treatment Date</string>
-    <string name="watering">Watering</string>
-    <string name="fertilizer">Fertilizer</string>
-    <string name="problem_details">Problem Details</string>
-    <string name="solution_details">solution Details</string>
+    <!-- Plant Condition dropdown -->
+    <string name="healthy">Healthy</string>
+    <string name="wilted">wilted</string>
+    <string name="pestDisease">Pest/Disease</string>
+    <string name="nutrient">Nutrient Deficiency</string>
+
+    <string name="treatment_type">Treatment Type</string>
+    <!-- Plant Treatment Type dropdown -->
+    <string name="fertilizing">Fertilizing</string>
+    <string name="watering_treatment">Watering</string>
+    <string name="pruning_treatment">Pruning</string>
+    <string name="pestDisease_control">Pest/Disease Control</string>
+
+    <string name="problem">Problem Details</string>
+    <string name="solution">Solution Details</string>
 
     <!-- Plant Lens Feature -->
+    <string name="lens_note">Point the camera at the leaf or part of the plant you want to analyze.</string>
+    <string name="lens_button">Analyze</string>
+    <string name="lens_image">Preview Image</string>
+    <string name="lens_result">Analysis Result</string>
 
     <!-- Plant Encyclopedia Feature -->
-    <string name="top_search">Top Search</string>
+    <string name="search">Search Plant...</string>
     <string name="search_result">Search Result</string>
-    <string name="search">Search</string>
+    <string name="search_history">Search History</string>
+    <string name="history_clear">Clear</string>
+    <string name="search_no">No Result</string>
+    <string name="watering">Watering</string>
+    <string name="sunlight">Sunlight</string>
+    <string name="pruning">Pruning</string>
 
-
-
-
-
-    <!-- Placeholder Card -->
-    <string name="news_source1">detik.com</string>
-    <string name="news_date1">Sabtu, 22 Nov 2025 13:00 WIB</string>
-    <string name="news_title1">Hati-hati Tanaman Bisa Mati Gegara Kutu Putih! Begini Cara Basminya</string>
-
-    <string name="news_source2">compas.com</string>
-    <string name="news_date2">Senin, 24 Nov 2025 18:32 WIB</string>
-    <string name="news_title2">Tanaman Hias Sebaiknya Diletakkan Berdekatan atau Berjarak?</string>
-
-
-
-    <!-- Placeholder Encyclopedia -->
-    <string name="encyclopedia_title">BAYAM MERAH</string>
-    <string name="encyclopedia_harvest">30-40 Hari</string>
-    <string name="encyclopedia_difficult">SEDANG</string>
-
-
-
-
-
+    <!-- Bookmark Feature -->
+    <string name="empty_encyclopedia">No Saved Plant Encyclopedia</string>
+    <string name="empty_lens">No Saved Plant Lens</string>
 
 
 </resources>

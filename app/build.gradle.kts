@@ -91,6 +91,12 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
+    implementation("androidx.navigation:navigation-compose:2.7.2")
+    implementation("androidx.compose.animation:animation:1.6.1")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
+
+
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -49,23 +49,6 @@ class EncyclopediaViewModel(private val repo: EncyclopediaRepository): ViewModel
             }.launchIn(viewModelScope)
     }
 
-    // DETAIL
-    fun loadDetail(id: Int, onResult: (PlantDetail?) -> Unit) {
-        _isLoading.value = true
-        _error.value = null
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val detail = repo.getPlantDetail(id)
-                onResult(detail)
-            } catch (e: Exception) {
-                _error.value = e.localizedMessage ?: "Gagal ambil detail"
-                onResult(null)
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
     fun loadCareGuide(id: Int, onResult: (List<CareGuideItem>?) -> Unit) {
         _isLoading.value = true
         _error.value = null

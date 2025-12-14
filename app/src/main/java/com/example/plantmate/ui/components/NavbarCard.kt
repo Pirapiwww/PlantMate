@@ -3,14 +3,7 @@ package com.example.plantmate.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,17 +14,21 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.plantmate.model.NavbarIcon
 
 @Composable
 fun BottomNavBar(
     navbarItems: List<NavbarIcon>,
-    selectedIndex: Int,
-    onItemSelected: (Int) -> Unit,
-    navController: NavController,
+    navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute =
+        navBackStackEntry.value?.destination?.route
+            ?.substringBefore("?") // ⬅️ aman untuk route dengan argumen
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -40,21 +37,26 @@ fun BottomNavBar(
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        navbarItems.forEachIndexed { index, item ->
+        navbarItems.forEach { item ->
+
+            val isSelected = currentRoute == item.route
+
             BottomNavItem(
                 item = item,
-                selected = index == selectedIndex,
+                selected = isSelected,
                 onClick = {
-                    onItemSelected(index)
-                    navController.navigate(item.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     }
                 }
             )
+
         }
     }
 }
@@ -73,7 +75,6 @@ fun BottomNavItem(
             .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Image(
             painter = painterResource(item.icon),
             contentDescription = null,
@@ -85,9 +86,8 @@ fun BottomNavItem(
 
         Text(
             text = stringResource(item.title),
-            style = MaterialTheme.typography.labelSmall.copy(
-                color = tintColor
-            )
+            style = MaterialTheme.typography.labelSmall,
+            color = tintColor
         )
     }
 }

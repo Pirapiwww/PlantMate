@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:name=".YourApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,7 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlantMate">
 
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,7 +24,6 @@
             android:theme="@style/Theme.PlantMate">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,7 +35,7 @@
             android:grantUriPermissions="true"
             tools:replace="android:authorities">
 
-        <meta-data
+            <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>

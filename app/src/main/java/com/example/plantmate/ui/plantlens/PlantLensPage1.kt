@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -52,8 +51,12 @@ fun PlantLensInputScreen(
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
 
     Column(
-        modifier = Modifier.fillMaxSize()
-    ){
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+
+        // ===== TOP BAR =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,12 +65,10 @@ fun PlantLensInputScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // ▼▼ BACK BUTTON NAVIGASI ▼▼
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier.size(24.dp)
+                    contentDescription = "Back"
                 )
             }
 
@@ -83,6 +84,7 @@ fun PlantLensInputScreen(
             Spacer(modifier = Modifier.width(24.dp))
         }
 
+        // ===== CONTENT =====
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -94,7 +96,7 @@ fun PlantLensInputScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 16.dp)
+                    .padding(bottom = 16.dp)
             )
 
             CameraPreview(
@@ -110,28 +112,44 @@ fun PlantLensInputScreen(
 
             Button(
                 onClick = {
+
+                    val plantLensDir = File(context.filesDir, "plant_lens")
+                    if (!plantLensDir.exists()) {
+                        plantLensDir.mkdirs()
+                    }
+
                     val outputFile = File(
-                        context.cacheDir,
-                        "snap_${System.currentTimeMillis()}.jpg"
+                        plantLensDir,
+                        "plant_${System.currentTimeMillis()}.jpg"
                     )
+
                     val uri = FileProvider.getUriForFile(
                         context,
-                        context.packageName + ".provider",
+                        "${context.packageName}.provider",
                         outputFile
                     )
 
-                    val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
+                    val outputOptions =
+                        ImageCapture.OutputFileOptions.Builder(outputFile).build()
 
                     imageCapture?.takePicture(
                         outputOptions,
                         ContextCompat.getMainExecutor(context),
                         object : ImageCapture.OnImageSavedCallback {
-                            override fun onImageSaved(result: ImageCapture.OutputFileResults) {
-                                onAnalysis(uri) // → pindah screen result
+
+                            override fun onImageSaved(
+                                result: ImageCapture.OutputFileResults
+                            ) {
+                                onAnalysis(uri)
                             }
 
                             override fun onError(exc: ImageCaptureException) {
                                 exc.printStackTrace()
+                                Toast.makeText(
+                                    context,
+                                    "Gagal mengambil gambar",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     )
@@ -143,6 +161,7 @@ fun PlantLensInputScreen(
         }
     }
 }
+
 
 
 @Composable
@@ -190,9 +209,3 @@ fun CameraPreview(
     )
 }
 
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PlantLensScreenPreview() {
-    PlantLensInputScreen()
-}

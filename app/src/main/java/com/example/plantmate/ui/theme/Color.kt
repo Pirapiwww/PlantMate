@@ -2,10 +2,25 @@ package com.example.plantmate.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+/* ===== LIGHT COLORS ===== */
+/* ===== LIGHT COLORS ===== */
+val PrimaryLight = Color(0xFF8FAF6B)
+val OnPrimaryLight = Color(0xFFFFFFFF)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val SecondaryLight = Color(0xFFA7C48C)
+val OnSecondaryLight = Color(0xFF1C1C1C)
+
+val TertiaryLight = Color(0xFFB7D3A8)
+val OnTertiaryLight = Color(0xFF1C1C1C)
+
+/* ===== BACKGROUND & SURFACE ===== */
+val BackgroundLight = Color(0xFFF5F5F5)
+val OnBackgroundLight = Color(0xFF1C1B1F)
+
+/* 🔥 FORCE WHITE SURFACE */
+val SurfaceLight = Color(0xFFFFFFFF)
+val OnSurfaceLight = Color(0xFF1C1C1C)
+
+/* 🔥 MATERIAL 3 SURFACE VARIANTS */
+val SurfaceVariantLight = Color(0xFFFFFFFF)
+val OnSurfaceVariantLight = Color(0xFF1C1C1C)

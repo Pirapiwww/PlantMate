@@ -5,123 +5,96 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.plantmate.R
+import com.example.plantmate.data.DataSource
+import com.example.plantmate.ui.components.dropdowns.JournalDropdown
 
 @Composable
-fun TreatmentForm() {
+fun TreatmentForm(
+    plantName: String,
+    plantCondition: String,
+    treatmentType: String,
+    problem: String,
+    solution: String,
+    notes: String,
+    onValueChange: (String, String) -> Unit
+) {
 
-    var plantName by remember { mutableStateOf("") }
-    var plantCondition by remember { mutableStateOf("") }
-    var noteDate by remember { mutableStateOf("") }
-    var watering by remember { mutableStateOf("") }
-    var fertilizer by remember { mutableStateOf("") }
-    var issue by remember { mutableStateOf("") }
-    var solution by remember { mutableStateOf("") }
-    var notes by remember { mutableStateOf("") }
+    val ds = DataSource()
 
+    // PLANT NAME
     Text(
-        stringResource(id = R.string.plant_name),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        stringResource(R.string.plant_name),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
-
     OutlinedTextField(
         value = plantName,
-        onValueChange = { plantName = it },
-        label = { Text("Nama Tanaman") },
-        modifier = Modifier.Companion.fillMaxWidth()
+        onValueChange = { onValueChange("plantName", it) },
+        label = { Text(stringResource(R.string.plant_name)) },
+        modifier = Modifier.fillMaxWidth()
     )
 
+    // CONDITION
     Text(
-        stringResource(id = R.string.treatment_date),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        stringResource(R.string.plant_condition),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+    JournalDropdown(
+        placeholder = stringResource(R.string.select_x, stringResource(R.string.plant_condition)),
+        items = ds.loadCondition(),
+        onSelected = { onValueChange("plantCondition", it) }
     )
 
-    OutlinedTextField(
-        value = noteDate,
-        onValueChange = { noteDate = it },
-        label = { Text("Tanggal Catatan") },
-        modifier = Modifier.Companion.fillMaxWidth()
-    )
-
+    // TREATMENT TYPE
     Text(
-        stringResource(id = R.string.plant_condition),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        stringResource(R.string.treatment_type),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+    JournalDropdown(
+        placeholder = stringResource(R.string.select_x, stringResource(R.string.treatment_type)),
+        items = ds.loadTreatment(),
+        onSelected = { onValueChange("treatmentType", it) }
     )
 
-    OutlinedTextField(
-        value = plantCondition,
-        onValueChange = { plantCondition = it },
-        label = { Text("Kondisi Tanaman") },
-        modifier = Modifier.Companion.fillMaxWidth()
-    )
-
+    // PROBLEM
     Text(
-        stringResource(id = R.string.watering),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        stringResource(R.string.problem),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
-
     OutlinedTextField(
-        value = watering,
-        onValueChange = { watering = it },
-        label = { Text("Penyiraman") },
-        modifier = Modifier.Companion.fillMaxWidth()
-    )
-
-    Text(
-        stringResource(id = R.string.fertilizer),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
-    )
-
-    OutlinedTextField(
-        value = fertilizer,
-        onValueChange = { fertilizer = it },
-        label = { Text("Pupuk") },
-        modifier = Modifier.Companion.fillMaxWidth()
-    )
-
-    Text(
-        stringResource(id = R.string.problem_details),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
-    )
-
-    OutlinedTextField(
-        value = issue,
-        onValueChange = { issue = it },
-        label = { Text("Masalah / Gejala") },
-        modifier = Modifier.Companion.fillMaxWidth(),
+        value = problem,
+        onValueChange = { onValueChange("problem", it) },
+        label = { Text(stringResource(R.string.problem)) },
+        modifier = Modifier.fillMaxWidth(),
         minLines = 4
     )
 
+    // SOLUTION
     Text(
-        stringResource(id = R.string.solution_details),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        stringResource(R.string.solution),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
-
     OutlinedTextField(
         value = solution,
-        onValueChange = { solution = it },
-        label = { Text("Tindakan / Solusi") },
-        modifier = Modifier.Companion.fillMaxWidth(),
+        onValueChange = { onValueChange("solution", it) },
+        label = { Text(stringResource(R.string.solution)) },
+        modifier = Modifier.fillMaxWidth(),
         minLines = 4
     )
 
+    // NOTES
     Text(
-        stringResource(id = R.string.note),
-        modifier = Modifier.Companion.padding(top = 16.dp, bottom = 6.dp)
+        stringResource(R.string.note),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
     )
-
     OutlinedTextField(
         value = notes,
-        onValueChange = { notes = it },
-        label = { Text("Catatan Tambahan") },
-        modifier = Modifier.Companion.fillMaxWidth(),
+        onValueChange = { onValueChange("notes", it) },
+        label = { Text(stringResource(R.string.note)) },
+        modifier = Modifier.fillMaxWidth(),
         minLines = 6
     )
 }

@@ -1,71 +1,69 @@
 package com.example.plantmate.data.repository
 
-import com.example.plantmate.model.PlantNews
+import androidx.compose.runtime.remember
+import com.example.plantmate.data.local.dao.NewsDao
+import com.example.plantmate.data.local.entity.NewsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
-suspend fun fetchNews(): List<PlantNews> {
-    val url = "https://news.google.com/rss/search?q=tanaman+when:7d&hl=id&gl=ID&ceid=ID:id"
+class NewsRepository(
+    private val newsDao: NewsDao
+) {
 
-    return withContext(Dispatchers.IO) {
-        val doc = Jsoup.connect(url).get()
-        val items = doc.select("item")
+    suspend fun syncNews() = withContext(Dispatchers.IO) {
+        val newNewsList = fetchNewsFromNetwork()
+        val oldNewsList = newsDao.getAllNewsOnce()
 
-        items.map { item ->
-            val title = item.select("title").text()
-            val link = item.select("link").text()
-            val pubDate = item.select("pubDate").text()
-            val sourceRaw = item.select("source").text()
-            val source = cleanSourceUrl(sourceRaw)
-
-            // Fetch OG image dari halaman berita
-            val realUrl = extractRealUrl(link)
-            val ogImage = fetchOgImage(realUrl)
-
-            PlantNews(
-                newsImage = ogImage,
-                source = source,
-                newsDate = pubDate,
-                newsTitle = title,
-                pubLink = link
-            )
+        if (oldNewsList.isEmpty()) {
+            newsDao.insertAll(newNewsList)
+            return@withContext
         }
+
+        val oldLinks = oldNewsList.map { it.pubLink }.toSet()
+        val newLinks = newNewsList.map { it.pubLink }.toSet()
+
+        if (oldLinks == newLinks) return@withContext
+
+        newsDao.deleteAll()
+        newsDao.insertAll(newNewsList)
     }
-}
 
-fun cleanSourceUrl(url: String): String {
-    // Hilangkan protokol
-    var clean = url.removePrefix("https://")
-        .removePrefix("http://")
+    private suspend fun fetchNewsFromNetwork(): List<NewsEntity> {
+        val url =
+            "https://news.google.com/rss/search?q=tanaman+when:7d&hl=id&gl=ID&ceid=ID:id"
 
-    // Hilangkan www.
-    clean = clean.removePrefix("www.")
+        return withContext(Dispatchers.IO) {
+            val doc = Jsoup.connect(url).get()
+            val items = doc.select("item")
 
-    // Ambil hanya nama domain pertama (sebelum titik)
-    clean = clean.substringBefore(".")
+            items.map {
+                val title = it.select("title").text()
+                val link = it.select("link").text()
+                val pubDate = it.select("pubDate").text()
+                val sourceRaw = it.select("source").text()
+                val source = cleanSourceUrl(sourceRaw)
 
-    // Ubah ke huruf besar
-    return clean.uppercase()
-}
+                val randomNumber = (1..9).random()
+                val newsImage = "news_$randomNumber" // ⬅️ SELALU VALID
 
-fun extractRealUrl(googleNewsUrl: String): String {
-    // Google News kadang mengandung "url="
-    return try {
-        val url = java.net.URL(googleNewsUrl)
-        val query = url.query ?: return googleNewsUrl
-
-        val params = query.split("&")
-        for (p in params) {
-            if (p.startsWith("url=")) {
-                return p.removePrefix("url=").trim()
+                NewsEntity(
+                    newsImage = newsImage,
+                    source = source,
+                    newsDate = pubDate,
+                    newsTitle = title,
+                    pubLink = link
+                )
             }
         }
-        googleNewsUrl
-    } catch (e: Exception) {
-        googleNewsUrl
+    }
+
+    private fun cleanSourceUrl(url: String): String {
+        return url
+            .removePrefix("https://")
+            .removePrefix("http://")
+            .removePrefix("www.")
+            .substringBefore(".")
+            .uppercase()
     }
 }
-
-
-
