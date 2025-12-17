@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,6 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.plantmate.data.viewmodel.local.ViewModelFactory
 import com.example.plantmate.navigation.NavbarApp
 import com.example.plantmate.ui.theme.PlantMateTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 val LocalViewModelFactory = staticCompositionLocalOf<ViewModelProvider.Factory> {
     error("No ViewModelFactory provided")
@@ -22,9 +26,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val defaultLanguage = "en"
-        setLanguage(defaultLanguage)
 
         // Full screen
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -52,6 +53,14 @@ class MainActivity : AppCompatActivity() {
             PlantMateTheme {
                 CompositionLocalProvider(LocalViewModelFactory provides factory) {
                     val navController = rememberNavController()
+
+                    // 🔹 Launch sync news ketika Composable pertama kali dibangun
+                    LaunchedEffect(Unit) {
+                        // Pastikan syncNews dijalankan di background
+                        CoroutineScope(Dispatchers.IO).launch {
+                            app.newsLocalRepository.syncNews()
+                        }
+                    }
 
                     NavbarApp(
                         navController = navController,
