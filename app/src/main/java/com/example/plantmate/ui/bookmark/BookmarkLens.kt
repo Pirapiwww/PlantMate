@@ -71,7 +71,7 @@ fun BookmarkLensScreen(
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                stringResource(id = R.string.plant_lens),
+                stringResource(id = R.string.navbar_bookmark),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
@@ -100,7 +100,7 @@ fun BookmarkLensScreen(
 
             // ===== CREATED DATE =====
             Text(
-                text = "Created at: ${lens.savedDate ?: "-"}",
+                text = "${stringResource(id = R.string.created)} ${lens.savedDate ?: "-"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -128,7 +128,7 @@ fun BookmarkLensScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Hasil Analisis AI",
+                text = stringResource(id = R.string.lens_result),
                 style = MaterialTheme.typography.bodyMedium
             )
 

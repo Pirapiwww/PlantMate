@@ -24,12 +24,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.plantmate.R
-import com.example.plantmate.data.local.entity.EncyclopediaEntity
 import com.example.plantmate.data.local.entity.LensEntity
 
 @Composable
@@ -79,7 +79,7 @@ fun LensCardSimple(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = item.savedDate ?: "-",
+                text = "${stringResource(id = R.string.created)} ${item.savedDate}",
                 style = MaterialTheme.typography.bodySmall
             )
         }
@@ -134,7 +134,7 @@ fun LensCard(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = item.savedDate ?: "-",
+                text = "${stringResource(id = R.string.created)} ${item.savedDate}",
                 style = MaterialTheme.typography.bodySmall
             )
         }

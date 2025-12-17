@@ -1,4 +1,4 @@
-package com.example.plantmate.ui.plantnews
+package com.example.plantmate.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -21,9 +21,9 @@ fun PaginationBar(
     val windowSize = 3
 
     Row(
-        modifier = Modifier
+        modifier = Modifier.Companion
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         val half = windowSize / 2
@@ -35,12 +35,12 @@ fun PaginationBar(
             TextButton(onClick = { onPageChange(1) }) {
                 Text(
                     "1",
-                    color = Color.Black
+                    color = Color.Companion.Black
                 )
             }
             Text(
                 "…",
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .padding(top = 8.dp)
             )
         }
@@ -51,7 +51,7 @@ fun PaginationBar(
                     text = i.toString(),
                     color = if (i == currentPage)
                         MaterialTheme.colorScheme.primary
-                    else Color.Black
+                    else Color.Companion.Black
                 )
             }
         }
@@ -59,13 +59,13 @@ fun PaginationBar(
         if (end < totalPages) {
             Text(
                 "…",
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .padding(top = 8.dp)
             )
             TextButton(onClick = { onPageChange(totalPages) }) {
                 Text(
                     totalPages.toString(),
-                    color = Color.Black
+                    color = Color.Companion.Black
                 )
             }
         }

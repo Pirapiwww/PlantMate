@@ -31,12 +31,12 @@ import com.example.plantmate.model.FeatureIcon
 fun FeatureList(
     featureList: List<FeatureIcon>,
     modifier: Modifier = Modifier,
-    onFeatureClick: (FeatureIcon) -> Unit   // ⬅ callback baru
+    onFeatureClick: (FeatureIcon) -> Unit
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .padding(end = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

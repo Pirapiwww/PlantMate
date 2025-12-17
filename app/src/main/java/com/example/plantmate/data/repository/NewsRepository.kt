@@ -1,8 +1,8 @@
 package com.example.plantmate.data.repository
 
-import androidx.compose.runtime.remember
 import com.example.plantmate.data.local.dao.NewsDao
 import com.example.plantmate.data.local.entity.NewsEntity
+import com.example.plantmate.isIndonesianLanguage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -11,8 +11,11 @@ class NewsRepository(
     private val newsDao: NewsDao
 ) {
 
+    // ===============================
+    // SYNC NEWS
+    // ===============================
     suspend fun syncNews() = withContext(Dispatchers.IO) {
-        val newNewsList = fetchNewsFromNetwork()
+        val newNewsList = fetchAllNews()
         val oldNewsList = newsDao.getAllNewsOnce()
 
         if (oldNewsList.isEmpty()) {
@@ -29,10 +32,33 @@ class NewsRepository(
         newsDao.insertAll(newNewsList)
     }
 
-    private suspend fun fetchNewsFromNetwork(): List<NewsEntity> {
-        val url =
-            "https://news.google.com/rss/search?q=tanaman+when:7d&hl=id&gl=ID&ceid=ID:id"
+    // ===============================
+    // FETCH SEMUA KATEGORI
+    // ===============================
+    private suspend fun fetchAllNews(): List<NewsEntity> {
 
+        val keywords = if (isIndonesianLanguage()) {
+            listOf("tanaman", "buah", "sayur", "tanaman hias", "herbal")
+        } else {
+            listOf("plants", "fruit", "vegetable", "ornamental plants", "herbs")
+        }
+
+        val urls = keywords.map { buildUrl(it) }
+
+        val allNews = mutableListOf<NewsEntity>()
+
+        urls.forEach { url ->
+            allNews += fetchNewsFromNetwork(url)
+        }
+
+        // 🔥 HILANGKAN DUPLIKAT BERDASARKAN LINK
+        return allNews.distinctBy { it.pubLink }
+    }
+
+    // ===============================
+    // FETCH PER RSS
+    // ===============================
+    private suspend fun fetchNewsFromNetwork(url: String): List<NewsEntity> {
         return withContext(Dispatchers.IO) {
             val doc = Jsoup.connect(url).get()
             val items = doc.select("item")
@@ -45,7 +71,7 @@ class NewsRepository(
                 val source = cleanSourceUrl(sourceRaw)
 
                 val randomNumber = (1..9).random()
-                val newsImage = "news_$randomNumber" // ⬅️ SELALU VALID
+                val newsImage = "news_$randomNumber"
 
                 NewsEntity(
                     newsImage = newsImage,
@@ -56,6 +82,15 @@ class NewsRepository(
                 )
             }
         }
+    }
+
+    // ===============================
+    // HELPER
+    // ===============================
+    private fun buildUrl(keyword: String): String {
+        val query = keyword.replace(" ", "+")
+        val lang = if (isIndonesianLanguage()) "id" else "en"
+        return "https://news.google.com/rss/search?q=$query+when:7d&hl=$lang&gl=ID&ceid=ID:$lang"
     }
 
     private fun cleanSourceUrl(url: String): String {

@@ -39,15 +39,12 @@ fun CareGuideScreen(
     onBack: () -> Unit,
     navController: NavHostController
 ) {
-    val context = LocalContext.current
+    val app = LocalContext.current.applicationContext as YourApp
 
-    val viewModel: EncyclopediaLocalViewModel = viewModel(
-        factory = ViewModelFactory(
-            (context.applicationContext as YourApp).encyclopediaLocalRepository,
-            (context.applicationContext as YourApp).newsLocalRepository,
-            (context.applicationContext as YourApp).lensLocalRepository
-            )
-    )
+    // encyclopedia
+    val viewModel: EncyclopediaLocalViewModel =
+        viewModel(factory = app.viewModelFactory)
+
 
     val isBookmarked by viewModel
         .isBookmarked(careGuide.common_name)

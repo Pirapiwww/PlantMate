@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">PlantMate</string>
-    <string name="bookmark">Bookmark</string>
     <string name="no_image">No Image</string>
+    <string name="title">Title</string>
+    <string name="create_journal">Create New Journal</string>
+    <string name="search_news">Search News...</string>
+    <string name="no_news">No News Found</string>
+    <string name="camera">Camera Permission Required</string>
+    <string name="image_error">Failed to Take an Image</string>
 
     <!-- Bottom Navbar -->
     <string name="navbar_home">Home</string>
@@ -23,10 +28,15 @@
 
     <string name="detail">See Detail >></string>
 
+
     <!-- Menu My Journal -->
     <string name="preparation">Preparation</string>
     <string name="planting">Planting</string>
     <string name="treatment">Treatment</string>
+
+    <string name="preparation_detail">Preparation Details</string>
+    <string name="planting_detail">Planting Details</string>
+    <string name="treatment_detail">Treatment Details</string>
 
     <!-- Menu Profile -->
     <string name="account">Account Details</string>
@@ -129,7 +139,10 @@
     <string name="lens_note">Point the camera at the leaf or part of the plant you want to analyze.</string>
     <string name="lens_button">Analyze</string>
     <string name="lens_image">Preview Image</string>
-    <string name="lens_result">Analysis Result</string>
+    <string name="lens_result">AI Analysis Result</string>
+    <string name="lens_analyze">analyzing image...</string>
+    <string name="lens_ex">Example: Chili leaves turn yellow</string>
+    <string name="lens_title">Title is Required</string>
 
     <!-- Plant Encyclopedia Feature -->
     <string name="search">Search Plant...</string>
@@ -141,9 +154,13 @@
     <string name="sunlight">Sunlight</string>
     <string name="pruning">Pruning</string>
 
-    <!-- Bookmark Feature -->
+    <!-- Empty -->
     <string name="empty_encyclopedia">No Saved Plant Encyclopedia</string>
     <string name="empty_lens">No Saved Plant Lens</string>
+    <string name="empty_journal">No Saved Plant Journal</string>
+    <string name="empty_preparation">No Saved Preparation Category</string>
+    <string name="empty_planting">No Saved Planting Category</string>
+    <string name="empty_treatment">No Saved Treatment Category</string>
 
 
 </resources>

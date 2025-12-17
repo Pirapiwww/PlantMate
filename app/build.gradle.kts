@@ -89,6 +89,7 @@ dependencies {
     // ROOM Database (local)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.appcompat)
     kapt("androidx.room:room-compiler:2.6.1")
 
     implementation("androidx.navigation:navigation-compose:2.7.2")

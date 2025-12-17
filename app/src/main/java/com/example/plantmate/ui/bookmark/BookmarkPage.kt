@@ -3,9 +3,6 @@ package com.example.plantmate.ui.bookmark
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
@@ -21,11 +18,12 @@ import androidx.navigation.NavHostController
 import com.example.plantmate.R
 import com.example.plantmate.YourApp
 import com.example.plantmate.data.DataSource
-import com.example.plantmate.ui.components.BottomNavBar
-import com.example.plantmate.ui.components.EncyclopediaCard
 import com.example.plantmate.data.viewmodel.local.EncyclopediaLocalViewModel
 import com.example.plantmate.data.viewmodel.local.LensLocalViewModel
+import com.example.plantmate.ui.components.BottomNavBar
+import com.example.plantmate.ui.components.EncyclopediaCard
 import com.example.plantmate.ui.components.LensCard
+import com.example.plantmate.ui.components.PaginationBar
 import java.io.File
 
 @Composable
@@ -35,25 +33,56 @@ fun BookmarkScreen(
 ) {
     val app = LocalContext.current.applicationContext as YourApp
 
-    // encyclopedia
+    // ======================
+    // VIEW MODELS
+    // ======================
     val encyclopediaViewModel: EncyclopediaLocalViewModel =
         viewModel(factory = app.viewModelFactory)
 
-    val encyclopediaList by encyclopediaViewModel.encyclopedia.collectAsState()
-
-    // lens
     val lensViewModel: LensLocalViewModel =
         viewModel(factory = app.viewModelFactory)
 
+    val encyclopediaList by encyclopediaViewModel.encyclopedia.collectAsState()
     val lensList by lensViewModel.lens.collectAsState()
 
+    // ======================
+    // TAB STATE
+    // ======================
     var selectedTab by remember { mutableStateOf(initialTab) }
+
     val tabs = listOf(
         stringResource(R.string.plant_lens),
         stringResource(R.string.plant_encyclopedia)
     )
 
-    // Bottom Navbar
+    // ======================
+    // PAGINATION
+    // ======================
+    val itemsPerPage = 4
+    var currentPage by remember { mutableStateOf(1) }
+
+    LaunchedEffect(selectedTab) {
+        currentPage = 1
+    }
+
+    val currentList =
+        if (selectedTab == 0) lensList else encyclopediaList
+
+    val totalPages =
+        (currentList.size + itemsPerPage - 1) / itemsPerPage
+
+    if (currentPage > totalPages && totalPages > 0) {
+        currentPage = 1
+    }
+
+    val pagedItems =
+        currentList
+            .drop((currentPage - 1) * itemsPerPage)
+            .take(itemsPerPage)
+
+    // ======================
+    // UI
+    // ======================
     val navbarItems = DataSource().loadNavbar()
     val topColor = Color(0xFFDDE6C7)
 
@@ -63,10 +92,11 @@ fun BookmarkScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        Column(
-            modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            // ---------------- TOP BAR ----------------
+            // ======================
+            // TOP BAR
+            // ======================
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -77,7 +107,7 @@ fun BookmarkScreen(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = stringResource(id = R.string.bookmark),
+                    text = stringResource(id = R.string.navbar_bookmark),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
@@ -86,67 +116,58 @@ fun BookmarkScreen(
                 Spacer(modifier = Modifier.width(24.dp))
             }
 
-            // ---------------- TAB ROW ----------------
+            // ======================
+            // TAB ROW
+            // ======================
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Color.White,
-                contentColor = Color.Black,
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
                         modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                        color = Color(0xFF6FA66E),   // hijau saat aktif
+                        color = Color(0xFF6FA66E),
                         height = 3.dp
-                    )
-                },
-                divider = {
-                    // garis dividers bawah tab row dibuat putih agar tidak terlihat
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(3.dp)
-                            .background(Color.White)
                     )
                 }
             ) {
                 tabs.forEachIndexed { index, title ->
-
-                    val isSelected = selectedTab == index
-
                     Tab(
-                        selected = isSelected,
+                        selected = selectedTab == index,
                         onClick = { selectedTab = index },
-                        selectedContentColor = Color(0xFF6FA66E),  // teks hijau saat aktif
-                        unselectedContentColor = Color.Black,      // teks hitam saat non aktif
                         text = { Text(title) }
                     )
                 }
             }
 
-            // ---------------- CONTENT ----------------
+            // ======================
+            // CONTENT
+            // ======================
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 80.dp, top = 16.dp)
-
+                    .padding(top = 16.dp, bottom = 80.dp)
             ) {
 
                 when (selectedTab) {
 
-                    // ===== PLANT LENS TAB =====
+                    // ======================
+                    // PLANT LENS TAB
+                    // ======================
                     0 -> {
                         if (lensList.isEmpty()) {
                             Text(
                                 text = stringResource(R.string.empty_encyclopedia),
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp)
                                     .fillMaxWidth()
                                     .wrapContentWidth(Alignment.CenterHorizontally)
                             )
                         } else {
-                            lensList.forEach { lens ->
-                                Column(modifier = Modifier.padding(horizontal = 16.dp)){
+
+                            pagedItems.forEach { item ->
+                                val lens = item as com.example.plantmate.data.local.entity.LensEntity
+
+                                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                                     LensCard(
                                         item = lens,
                                         onClick = { id ->
@@ -164,41 +185,61 @@ fun BookmarkScreen(
                                                 }
                                             }
 
-                                            lensViewModel.deleteLens(it)
+                                            lensViewModel.deleteLens(lens)
                                         }
                                     )
                                     Spacer(modifier = Modifier.height(12.dp))
                                 }
                             }
+
+                            if (totalPages > 1) {
+                                PaginationBar(
+                                    currentPage = currentPage,
+                                    totalPages = totalPages,
+                                    onPageChange = { currentPage = it }
+                                )
+                            }
                         }
                     }
 
-                    // ===== PLANT ENCYCLOPEDIA TAB =====
+                    // ======================
+                    // PLANT ENCYCLOPEDIA TAB
+                    // ======================
                     1 -> {
-
                         if (encyclopediaList.isEmpty()) {
                             Text(
                                 text = stringResource(R.string.empty_encyclopedia),
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp)
                                     .fillMaxWidth()
                                     .wrapContentWidth(Alignment.CenterHorizontally)
                             )
                         } else {
-                            encyclopediaList.forEach { plant ->
-                                Column(modifier = Modifier.padding(horizontal = 16.dp)){
+
+                            pagedItems.forEach { item ->
+                                val plant =
+                                    item as com.example.plantmate.data.local.entity.EncyclopediaEntity
+
+                                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                                     EncyclopediaCard(
                                         item = plant,
                                         onClick = { id ->
                                             navController.navigate("localCareGuide/Bookmark/$id")
                                         },
                                         onDelete = {
-                                            encyclopediaViewModel.deleteEncyclopedia(it)
+                                            encyclopediaViewModel.deleteEncyclopedia(plant)
                                         }
                                     )
+                                    Spacer(modifier = Modifier.height(12.dp))
                                 }
-                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+
+                            if (totalPages > 1) {
+                                PaginationBar(
+                                    currentPage = currentPage,
+                                    totalPages = totalPages,
+                                    onPageChange = { currentPage = it }
+                                )
                             }
                         }
                     }
@@ -206,12 +247,13 @@ fun BookmarkScreen(
             }
         }
 
-        // ---------------- BOTTOM NAVBAR ----------------
+        // ======================
+        // BOTTOM NAVBAR
+        // ======================
         BottomNavBar(
             navbarItems = navbarItems,
             navController = navController,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
-
     }
 }

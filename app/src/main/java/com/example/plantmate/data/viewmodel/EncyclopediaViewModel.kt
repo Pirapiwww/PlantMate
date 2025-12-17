@@ -31,22 +31,32 @@ class EncyclopediaViewModel(private val repo: EncyclopediaRepository): ViewModel
             .distinctUntilChanged()
             .onEach { q ->
                 _error.value = null
+
                 if (q.isBlank()) {
                     _results.value = emptyList()
                     return@onEach
                 }
+
                 _isLoading.value = true
+
                 viewModelScope.launch(Dispatchers.IO) {
                     try {
                         val list = repo.searchPlants(q)
-                        _results.value = list
+
+                        // 🔥 FILTER BERDASARKAN COMMON NAME SAJA
+                        val filteredList = list.filter { plant ->
+                            plant.common_name?.contains(q, ignoreCase = true) == true
+                        }
+
+                        _results.value = filteredList
                     } catch (e: Exception) {
                         _error.value = e.localizedMessage ?: "Terjadi kesalahan"
                     } finally {
                         _isLoading.value = false
                     }
                 }
-            }.launchIn(viewModelScope)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun loadCareGuide(id: Int, onResult: (List<CareGuideItem>?) -> Unit) {

@@ -32,15 +32,22 @@ import java.io.File
 @Composable
 fun PlantLensInputScreen(
     onBack: () -> Unit = {},
-    onAnalysis: (Uri?) -> Unit = {}
-) {
+    onAnalysis: (String) -> Unit = {}) {
 
     val context = LocalContext.current
 
+    val cameraPermissionDeniedText = stringResource(id = R.string.camera)
+
     val cameraPermissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { granted ->
             if (!granted) {
-                Toast.makeText(context, "Izin kamera diperlukan", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    cameraPermissionDeniedText,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -92,7 +99,7 @@ fun PlantLensInputScreen(
         ) {
 
             Text(
-                text = "Arahkan kamera ke daun atau bagian tanaman.",
+                text = stringResource(id = R.string.lens_note),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -123,6 +130,7 @@ fun PlantLensInputScreen(
                         "plant_${System.currentTimeMillis()}.jpg"
                     )
 
+                    // ⚠️ Uri hanya untuk CameraX
                     val uri = FileProvider.getUriForFile(
                         context,
                         "${context.packageName}.provider",
@@ -140,23 +148,25 @@ fun PlantLensInputScreen(
                             override fun onImageSaved(
                                 result: ImageCapture.OutputFileResults
                             ) {
-                                onAnalysis(uri)
+                                // ✅ KIRIM PATH STRING
+                                onAnalysis(outputFile.absolutePath)
                             }
 
                             override fun onError(exc: ImageCaptureException) {
                                 exc.printStackTrace()
                                 Toast.makeText(
                                     context,
-                                    "Gagal mengambil gambar",
+                                    context.getString(R.string.image_error),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
+
                         }
                     )
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Analisis")
+                Text(stringResource(id = R.string.lens_button))
             }
         }
     }

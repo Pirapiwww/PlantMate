@@ -1,12 +1,8 @@
 package com.example.plantmate.data.repository.local
 
-import android.net.Uri
 import com.example.plantmate.data.local.dao.LensDao
-import com.example.plantmate.data.local.dao.NewsDao
-import com.example.plantmate.data.local.entity.EncyclopediaEntity
 import com.example.plantmate.data.local.entity.LensEntity
-import com.example.plantmate.data.local.entity.NewsEntity
-import com.example.plantmate.data.repository.NewsRepository
+import java.io.File
 
 class LensLocalRepository(
     private val dao: LensDao
@@ -31,6 +27,23 @@ class LensLocalRepository(
     }
 
     suspend fun deleteLens(lens: LensEntity) {
+
+        // 🔥 HAPUS FILE IMAGE CAMERA
+        lens.lensImage?.let { path ->
+            try {
+                // pastikan ini path file lokal
+                if (path.startsWith("/")) {
+                    val file = File(path)
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        // 🔥 HAPUS DATA DI ROOM
         dao.deleteLens(lens)
     }
 }

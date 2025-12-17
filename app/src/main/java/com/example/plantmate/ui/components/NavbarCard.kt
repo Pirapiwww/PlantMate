@@ -27,7 +27,7 @@ fun BottomNavBar(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute =
         navBackStackEntry.value?.destination?.route
-            ?.substringBefore("?") // ⬅️ aman untuk route dengan argumen
+            ?.substringBefore("?")
 
     Row(
         modifier = modifier

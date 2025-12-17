@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">PlantMate</string>
-    <string name="bookmark">Bookmark</string>
     <string name="no_image">Tidak Ada Gambar</string>
+    <string name="title">Judul</string>
+    <string name="create_journal">Buat Jurnal Baru</string>
+    <string name="search_news">Cari Berita...</string>
+    <string name="no_news">Berita Tidak Ditemukan</string>
+    <string name="camera">Izin Kamera Diperlukan</string>
+    <string name="image_error">Gagal Mengambil Gambar</string>
 
     <!-- Bottom Navbar -->
-    <string name="navbar_home">Home</string>
-    <string name="navbar_journal">Journal</string>
-    <string name="navbar_bookmark">Bookmark</string>
-    <string name="navbar_profile">Profile</string>
+    <string name="navbar_home">Beranda</string>
+    <string name="navbar_journal">Jurnal</string>
+    <string name="navbar_bookmark">Favorit</string>
+    <string name="navbar_profile">Profil</string>
 
     <!-- Feature -->
     <string name="plant_journal">Plant Journal</string>
@@ -27,6 +32,10 @@
     <string name="preparation">Persiapan</string>
     <string name="planting">Penanaman</string>
     <string name="treatment">Perawatan</string>
+
+    <string name="preparation_detail">Detail Persiapan</string>
+    <string name="planting_detail">Detail Penanaman</string>
+    <string name="treatment_detail">Detail Perawatan</string>
 
     <!-- Menu Profile -->
     <string name="account">Detail Akun</string>
@@ -127,9 +136,12 @@
 
     <!-- Plant Lens Feature -->
     <string name="lens_note">Arahkan kamera ke daun atau bagian tanaman yang ingin di Analisis.</string>
-    <string name="lens_button">Analisi</string>
+    <string name="lens_button">Analisis</string>
     <string name="lens_image">Pratinjau Gambar</string>
-    <string name="lens_result">Hasil Analisi</string>
+    <string name="lens_result">Hasil Analisis AI</string>
+    <string name="lens_analyze">Menganalisis Gambar...</string>
+    <string name="lens_ex">Contoh: Daun cabai menguning</string>
+    <string name="lens_title">Judul Wajib Diisi</string>
 
     <!-- Plant Encyclopedia Feature -->
     <string name="search">Cari Tanaman...</string>
@@ -141,8 +153,12 @@
     <string name="sunlight">Sinar Matahari</string>
     <string name="pruning">Pemangkasan</string>
 
-    <!-- Bookmark Feature -->
+    <!-- Empty -->
     <string name="empty_encyclopedia">Tidak ada Plant Encyclopedia yang disimpan</string>
     <string name="empty_lens">Tidak ada Plant Lens yang disimpan</string>
+    <string name="empty_journal">Tidak ada Plant Journal yang disimpan</string>
+    <string name="empty_preparation">Tidak ada kategori Persiapan yang disimpan</string>
+    <string name="empty_planting">Tidak ada kategori Penanaman yang disimpan</string>
+    <string name="empty_treatment">Tidak ada kategori Perawatan yang disimpan</string>
 
 </resources>

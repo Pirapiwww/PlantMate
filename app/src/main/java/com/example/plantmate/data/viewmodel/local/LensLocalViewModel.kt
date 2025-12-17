@@ -1,6 +1,5 @@
 package com.example.plantmate.data.viewmodel.local
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plantmate.data.local.entity.LensEntity
@@ -9,15 +8,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-
 class LensLocalViewModel(
     private val repo: LensLocalRepository
 ) : ViewModel() {
 
     val lens = repo.lens.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5_000),
-        emptyList()
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList()
     )
 
     fun addLens(
@@ -41,6 +39,4 @@ class LensLocalViewModel(
             repo.deleteLens(item)
         }
     }
-
-
 }

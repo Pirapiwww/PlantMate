@@ -4,8 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,47 +27,29 @@ import com.example.plantmate.data.DataSource
 import com.example.plantmate.data.viewmodel.local.EncyclopediaLocalViewModel
 import com.example.plantmate.data.viewmodel.local.LensLocalViewModel
 import com.example.plantmate.data.viewmodel.local.NewsLocalViewModel
-import com.example.plantmate.ui.components.FeatureList
-import com.example.plantmate.ui.components.BottomNavBar
-import com.example.plantmate.ui.components.EncyclopediaCardSimple
-import com.example.plantmate.ui.components.LensCardSimple
-import com.example.plantmate.ui.components.NewsCard
+import com.example.plantmate.data.viewmodel.local.FormVM.JournalLocalViewModel
+import com.example.plantmate.ui.components.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-
 
 @Composable
 fun PlantHomeScreen(navController: NavHostController) {
 
-    // Ambil dari room
     val app = LocalContext.current.applicationContext as YourApp
 
-    val newsViewModel: NewsLocalViewModel =
-        viewModel(factory = app.viewModelFactory)
+    val newsViewModel: NewsLocalViewModel = viewModel(factory = app.viewModelFactory)
+    val encyclopediaViewModel: EncyclopediaLocalViewModel = viewModel(factory = app.viewModelFactory)
+    val lensViewModel: LensLocalViewModel = viewModel(factory = app.viewModelFactory)
+    val journalViewModel: JournalLocalViewModel = viewModel(factory = app.viewModelFactory)
 
-    val encyclopediaViewModel: EncyclopediaLocalViewModel =
-        viewModel(factory = app.viewModelFactory)
-
-    val lensViewModel: LensLocalViewModel =
-        viewModel(factory = app.viewModelFactory)
-
-    // untuk news
     val newsList by newsViewModel.news.collectAsState()
-    val latestNews = newsList
-
     val isLoading by newsViewModel.isLoading.collectAsState()
 
-    // untuk encyclopedia
-    val encyclopediaList by encyclopediaViewModel.encyclopedia.collectAsState()
-    val encylopediaRow = encyclopediaList
+    val encyclopediaRow by encyclopediaViewModel.encyclopedia.collectAsState()
+    val lensRow by lensViewModel.lens.collectAsState()
+    val journalRow by journalViewModel.allJournals.collectAsState()
 
-    // untuk lens
-    val lensList by lensViewModel.lens.collectAsState()
-    val lensRow = lensList
-
-    var search by remember { mutableStateOf("") }
     val featureNavItems = DataSource().loadFeature()
-
     val navbarItems = DataSource().loadNavbar()
 
     Box(
@@ -77,7 +57,6 @@ fun PlantHomeScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,7 +64,7 @@ fun PlantHomeScreen(navController: NavHostController) {
                 .padding(bottom = 80.dp)
         ) {
 
-        // ---------------------- BANNER ----------------------
+            // ---------------------- BANNER ----------------------
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -99,9 +78,9 @@ fun PlantHomeScreen(navController: NavHostController) {
                 )
                 Row(
                     modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 36.dp, start = 16.dp, end = 16.dp)
-                    .align(Alignment.TopCenter),
+                        .fillMaxWidth()
+                        .padding(top = 36.dp, start = 16.dp, end = 16.dp)
+                        .align(Alignment.TopCenter),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -114,8 +93,7 @@ fun PlantHomeScreen(navController: NavHostController) {
                         Image(
                             painter = painterResource(id = R.drawable.logo_plantmate_text),
                             contentDescription = "PlantMate Logo",
-                            modifier = Modifier
-                                .height(20.dp), // sama persis kayak form
+                            modifier = Modifier.height(20.dp),
                             contentScale = ContentScale.Fit
                         )
                     }
@@ -149,49 +127,49 @@ fun PlantHomeScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ==========================
-            // SECTIONS LAIN
-            // ==========================
-            HomeSectionTitle("My Journal")
-            HomeCardPlaceholder()
-
-            // encyclopedia
-            HomeSectionTitle(
-                text = stringResource(id = R.string.encyclopedia_bookmark),
-                onSeeDetail = {
-                    navController.navigate("bookmark?tab=1") {
-                        popUpTo(0) {
-                            inclusive = true
+            // ========================== JOURNAL ==========================
+            if (journalRow.isNotEmpty()) {
+                HomeSectionTitle(
+                    text = stringResource(R.string.my_journal),
+                    onSeeDetail = {
+                        navController.navigate("journal") {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
                         }
-                        launchSingleTop = true
                     }
+                )
+
+                val pagerState = rememberPagerState(pageCount = { journalRow.size })
+                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
+                    val item = journalRow[page]
+                    JournalCardNoDelete(
+                        item = item,
+                        onClick = { id -> navController.navigate("myjournal/home/$id") },
+                        modifier = Modifier
+                            .width(340.dp)
+                            .padding(start = 16.dp)
+                    )
                 }
-            )
-            if (encylopediaRow.isEmpty()) {
-                Text(
-                    text = "No saved encyclopedia yet",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .padding(start = 16.dp, bottom = 24.dp)
+            }
+
+            // ========================== ENCYCLOPEDIA ==========================
+            if (encyclopediaRow.isNotEmpty()) {
+                HomeSectionTitle(
+                    text = stringResource(R.string.encyclopedia_bookmark),
+                    onSeeDetail = {
+                        navController.navigate("bookmark?tab=1") {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
                 )
-            } else {
-                val pagerState = rememberPagerState(
-                    pageCount = { encylopediaRow.size }
-                )
 
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxWidth()
-                ) { page ->
-
-                    val item = encylopediaRow[page]
-
+                val pagerState = rememberPagerState(pageCount = { encyclopediaRow.size })
+                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
+                    val item = encyclopediaRow[page]
                     EncyclopediaCardSimple(
                         item = item,
-                        onClick = { id ->
-                            navController.navigate("localCareGuide/Home/$id")
-                        },
+                        onClick = { id -> navController.navigate("localCareGuide/Home/$id") },
                         modifier = Modifier
                             .width(340.dp)
                             .padding(start = 16.dp)
@@ -199,36 +177,24 @@ fun PlantHomeScreen(navController: NavHostController) {
                 }
             }
 
-            // lens
-            HomeSectionTitle(
-                text = stringResource(id = R.string.lens_bookmark),
-                onSeeDetail = { }
-            )
-            if (lensRow.isEmpty()) {
-                Text(
-                    text = "No saved Plant Lens yet",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .padding(start = 16.dp, bottom = 24.dp)
-                )
-            } else {
-                val pagerState = rememberPagerState(
-                    pageCount = { lensRow.size }
+            // ========================== LENS ==========================
+            if (lensRow.isNotEmpty()) {
+                HomeSectionTitle(
+                    text = stringResource(R.string.lens_bookmark),
+                    onSeeDetail = {
+                        navController.navigate("bookmark?tab=0") {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
                 )
 
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxWidth()
-                ) { page ->
-
+                val pagerState = rememberPagerState(pageCount = { lensRow.size })
+                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
                     val item = lensRow[page]
-
                     LensCardSimple(
                         item = item,
-                        onClick = { id ->
-                            navController.navigate("lens/Home/$id")
-                        },
+                        onClick = { id -> navController.navigate("lens/Home/$id") },
                         modifier = Modifier
                             .width(340.dp)
                             .padding(start = 16.dp)
@@ -236,47 +202,40 @@ fun PlantHomeScreen(navController: NavHostController) {
                 }
             }
 
-            // news
+            // ========================== NEWS ==========================
             HomeSectionTitle(
-                text = stringResource(id = R.string.latest_news),
+                text = stringResource(R.string.latest_news),
                 onSeeDetail = { navController.navigate("plantNews") }
             )
-            if (latestNews.isEmpty() && isLoading) {
+
+            if (isLoading) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
+                        .padding(vertical = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
                 }
-            } else {
-                val pagerState = rememberPagerState(
-                    pageCount = { latestNews.size }
-                )
-
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxWidth()
-                ) { page ->
-
-                    val item = latestNews[page]
-
+            } else if (newsList.isNotEmpty()) {
+                val pagerState = rememberPagerState(pageCount = { newsList.size })
+                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
+                    val item = newsList[page]
                     NewsCard(
                         news = item,
                         modifier = Modifier.width(370.dp)
                     )
                 }
             }
+
         }
 
-        // ============== BOTTOM NAV ==============
+        // ========================== BOTTOM NAV ==========================
         BottomNavBar(
             navbarItems = navbarItems,
             navController = navController,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
-
     }
 }
 
@@ -293,24 +252,11 @@ fun HomeSectionTitle(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text, style = MaterialTheme.typography.titleSmall)
-
         Text(
-            "See Detail >>",
+            text = stringResource(id = R.string.detail),
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.clickable { onSeeDetail() }
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
 }
-
-@Composable
-fun HomeCardPlaceholder() {
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .height(120.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFE6E6E6))
-    )
-    Spacer(modifier = Modifier.height(14.dp)) }

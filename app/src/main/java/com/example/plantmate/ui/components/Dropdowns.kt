@@ -1,55 +1,68 @@
 package com.example.plantmate.ui.components.dropdowns
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.*
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.*
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JournalDropdown(
-    placeholder: String,
-    items: List<Int>,
-    onSelected: (String) -> Unit
+    value: Int?,                 // ⬅️ sekarang Int? (R.string id)
+    placeholder: Int,             // ⬅️ placeholder juga R.string
+    items: List<Int>,             // ⬅️ List<Int>
+    onSelected: (Int) -> Unit,    // ⬅️ return R.string id
+    modifier: Modifier = Modifier
 ) {
-    var selected by remember { mutableStateOf("") }
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
-    val stringItems = items.map { stringResource(it) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = modifier.fillMaxWidth()
+    ) {
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        ExposedDropdownMenuBox(
+        OutlinedTextField(
+            value = value?.let { context.getString(it) } ?: "",
+            onValueChange = {},
+            readOnly = true,
+            placeholder = {
+                Text(text = stringResource(id = placeholder))
+            },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+
+        ExposedDropdownMenu(
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+            onDismissRequest = { expanded = false }
         ) {
-            OutlinedTextField(
-                value = selected,
-                onValueChange = {},
-                readOnly = true,
-                placeholder = { Text(placeholder) },   // ← placeholder masuk sini
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                stringItems.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(item) },
-                        onClick = {
-                            selected = item
-                            onSelected(item)
-                            expanded = false
-                        }
-                    )
-                }
+            items.forEach { itemResId ->
+                DropdownMenuItem(
+                    text = {
+                        Text(text = stringResource(id = itemResId))
+                    },
+                    onClick = {
+                        onSelected(itemResId)
+                        expanded = false
+                    }
+                )
             }
         }
     }

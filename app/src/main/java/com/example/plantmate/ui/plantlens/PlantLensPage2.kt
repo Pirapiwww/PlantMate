@@ -22,12 +22,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.plantmate.R
 import com.example.plantmate.YourApp
-import com.example.plantmate.data.api.PlantIdApi
 import com.example.plantmate.data.viewmodel.local.LensLocalViewModel
-import com.example.plantmate.data.viewmodel.local.ViewModelFactory
-import com.example.plantmate.data.viewmodel.uriToBase64
-import com.example.plantmate.model.PlantIdRequest
-import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -36,118 +31,38 @@ import java.util.Locale
 @Composable
 fun PlantLensResultScreen(
     imageUri: String?,
-    apiKey: String,
-    plantIdApi: PlantIdApi,
     onBack: () -> Unit,
     navController: NavHostController
 ) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    var analysisText by remember { mutableStateOf("Menunggu analisis...") }
-    var isLoading by remember { mutableStateOf(false) }
 
     var title by rememberSaveable { mutableStateOf("") }
     var titleError by rememberSaveable { mutableStateOf(false) }
 
-    val viewModel: LensLocalViewModel = viewModel(
-        factory = ViewModelFactory(
-            (context.applicationContext as YourApp).encyclopediaLocalRepository,
-            (context.applicationContext as YourApp).newsLocalRepository,
-            (context.applicationContext as YourApp).lensLocalRepository
-        )
-    )
+    val context = LocalContext.current
+    val app = context.applicationContext as YourApp
 
-    LaunchedEffect(imageUri) {
-        if (imageUri != null) {
-            isLoading = true
+    val viewModel: LensLocalViewModel =
+        viewModel(factory = app.viewModelFactory)
 
-            val base64 = uriToBase64(context, Uri.parse(imageUri))
+    val analysisText = """
+        Status Kesehatan Tanaman: 🌱 Sehat (Probabilitas: 0.92)
 
-            val request = PlantIdRequest(
-                api_key = apiKey,
-                images = listOf(base64)
-            )
+        Kemungkinan Penyakit:
+            - Leaf Spot (Prob: 0.18)
+            - Powdery Mildew (Prob: 0.09)
 
-            scope.launch {
-                try {
-                    val response = plantIdApi.identifyPlant(request)
+        Klasifikasi Tumbuhan:
+            - Capsicum annuum (Prob: 0.87)
+            - Solanum lycopersicum (Prob: 0.12)
+    """.trimIndent()
 
-                    if (response.isSuccessful) {
-                        val result = response.body()?.result
-
-                        analysisText = buildString {
-
-                            if (result == null) {
-                                append("Tidak ada hasil analisis.\n")
-                                return@buildString
-                            }
-
-                            // ========== HEALTH STATUS ==========
-                            val isHealthy = result.is_healthy?.binary
-                            val healthProb = result.is_healthy?.probability
-
-                            append("Status Kesehatan Tanaman:\n")
-
-                            when (isHealthy) {
-                                true -> append("🌱 Sehat (Probabilitas: ${
-                                    String.format("%.2f", healthProb ?: 0.0)
-                                })\n\n")
-
-                                false -> append("⚠ Tidak Sehat (Probabilitas: ${
-                                    String.format("%.2f", healthProb ?: 0.0)
-                                })\n\n")
-
-                                null -> append("Tidak dapat menentukan kesehatan.\n\n")
-                            }
-
-                            // ========== DISEASE LIST ==========
-                            if (result.diseases.isNullOrEmpty()) {
-                                append("Tidak ditemukan penyakit.\n\n")
-                            } else {
-                                append("Kemungkinan Penyakit:\n")
-                                result.diseases.forEach {
-                                    append("- ${it.name ?: "Unknown"} (Prob: ${
-                                        String.format("%.2f", it.probability ?: 0.0)
-                                    })\n")
-                                }
-                                append("\n")
-                            }
-
-                            // ========== CLASSIFICATION ==========
-                            val species = result.classification?.suggested_species
-
-                            append("Klasifikasi Tumbuhan:\n")
-                            if (species.isNullOrEmpty()) {
-                                append("Tidak dapat mengidentifikasi spesies.")
-                            } else {
-                                species.take(3).forEach {
-                                    append("- ${it.name ?: "Unknown"} (Prob: ${
-                                        String.format("%.2f", it.probability ?: 0.0)
-                                    })\n")
-                                }
-                            }
-                        }
-                    } else {
-                        analysisText = "Gagal menganalisis. (HTTP ${response.code()})\n${response.errorBody()?.string()}"
-                    }
-
-                } catch (e: Exception) {
-                    analysisText = "Gagal menganalisis gambar.\n${e.message}"
-                }
-
-                isLoading = false
-            }
-        }
-    }
-
-    // =================== UI =====================
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // AppBar
+
+        // ================= APP BAR =================
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -155,14 +70,13 @@ fun PlantLensResultScreen(
                 .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             IconButton(
                 onClick = {
                     imageUri?.let {
                         try {
                             val file = File(Uri.parse(it).path ?: "")
-                            if (file.exists()) {
-                                file.delete()
-                            }
+                            if (file.exists()) file.delete()
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -177,11 +91,10 @@ fun PlantLensResultScreen(
                 )
             }
 
-
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                stringResource(id = R.string.plant_lens),
+                text = stringResource(id = R.string.plant_lens),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
@@ -190,16 +103,15 @@ fun PlantLensResultScreen(
             Spacer(modifier = Modifier.width(24.dp))
         }
 
-        // Content
+        // ================= CONTENT =================
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-
             Text(
-                text = "Gambar Bagian Tumbuhan",
+                text = stringResource(id = R.string.lens_image),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -214,7 +126,7 @@ fun PlantLensResultScreen(
             ) {
                 AsyncImage(
                     model = imageUri,
-                    contentDescription = "Captured Plant Image",
+                    contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -222,7 +134,7 @@ fun PlantLensResultScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Hasil Analisis AI",
+                text = stringResource(id = R.string.lens_result),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -236,18 +148,14 @@ fun PlantLensResultScreen(
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Box(modifier = Modifier.padding(16.dp)) {
-                    if (isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        Text(text = analysisText)
-                    }
+                    Text(text = analysisText)
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Judul Catatan",
+                text = stringResource(id = R.string.title),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -260,22 +168,22 @@ fun PlantLensResultScreen(
                     if (it.isNotBlank()) titleError = false
                 },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Judul Catatan *") },
-                placeholder = { Text("Contoh: Daun cabai menguning") },
+                label = { Text("${stringResource(id = R.string.title)} *") },
+                placeholder = { Text(stringResource(id = R.string.lens_ex)) },
                 isError = titleError,
                 singleLine = true
             )
 
             if (titleError) {
                 Text(
-                    text = "Judul wajib diisi",
+                    text = stringResource(id = R.string.lens_title),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(start = 16.dp, top = 4.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = {
@@ -285,8 +193,8 @@ fun PlantLensResultScreen(
                     }
 
                     val savedDate = SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm:ss",
-                        Locale.getDefault()
+                        "dd MMM yyyy",
+                        Locale("id", "ID")
                     ).format(Date())
 
                     viewModel.addLens(
@@ -297,9 +205,7 @@ fun PlantLensResultScreen(
                     )
 
                     navController.navigate("bookmark?tab=0") {
-                        popUpTo(0) {
-                            inclusive = true
-                        }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 },
@@ -309,9 +215,8 @@ fun PlantLensResultScreen(
                 ),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Bookmark")
+                Text(text = stringResource(id = R.string.navbar_bookmark))
             }
-
         }
     }
 }

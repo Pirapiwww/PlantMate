@@ -1,51 +1,47 @@
 package com.example.plantmate.ui.plantjournal
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.plantmate.R
+import com.example.plantmate.YourApp
+import com.example.plantmate.data.viewmodel.local.FormVM.JournalLocalViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun AddJournalDialog(
     show: Boolean,
-    onDismiss: () -> Unit,
-    onCreate: (String, Bitmap?) -> Unit
+    onDismiss: () -> Unit
 ) {
     if (!show) return
 
     val context = LocalContext.current
+    val app = context.applicationContext as YourApp
+    val journalViewModel: JournalLocalViewModel =
+        viewModel(factory = app.viewModelFactory)
+
     var name by remember { mutableStateOf("") }
-    var image by remember { mutableStateOf<Bitmap?>(null) }
 
-    val galleryLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let {
-            val stream = context.contentResolver.openInputStream(uri)
-            image = BitmapFactory.decodeStream(stream)
+    // Fungsi saat tombol Add diklik
+    val onAdd = {
+        if (name.isNotBlank()) {
+            val createdDate = SimpleDateFormat(
+                "dd MMM yyyy",
+                Locale("id", "ID")
+            ).format(Date())
+
+            journalViewModel.addJournal(name, createdDate)
+            onDismiss()
+        } else {
+            onDismiss()
         }
-    }
-
-    val cameraLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicturePreview()
-    ) { bitmap ->
-        image = bitmap
-    }
-
-    val defaultBitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888).apply {
-        eraseColor(android.graphics.Color.GRAY)
     }
 
     AlertDialog(
@@ -55,7 +51,7 @@ fun AddJournalDialog(
                 Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Create New Journal")
+                Text(text = stringResource(id = R.string.create_journal))
             }
         },
         text = {
@@ -63,61 +59,17 @@ fun AddJournalDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
+                // Input title
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Journal Name") },
+                    label = { Text(text = "${stringResource(id = R.string.plant_name)} (${stringResource(id = R.string.title)})" ) },
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                Box(
-                    Modifier
-                        .size(120.dp)
-                        .background(Color.Gray, RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (image != null) {
-                        Image(
-                            bitmap = image!!.asImageBitmap(),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Text("No Image", color = Color.White)
-                    }
-                }
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { galleryLauncher.launch("image/*") }
-                ) {
-                    Text("Upload Image")
-                }
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { cameraLauncher.launch(null) }
-                ) {
-                    Text("Take Photo")
-                }
-
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { image = defaultBitmap }
-                ) {
-                    Text("Use Default Image")
-                }
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                if (name.isNotBlank()) {
-                    onCreate(name, image)
-                } else {
-                    onDismiss()
-                }
-            }) {
+            TextButton(onClick = onAdd) {
                 Text("Add")
             }
         },
