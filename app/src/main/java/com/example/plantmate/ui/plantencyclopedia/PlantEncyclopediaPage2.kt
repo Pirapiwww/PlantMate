@@ -28,8 +28,10 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.plantmate.R
 import com.example.plantmate.YourApp
+import com.example.plantmate.data.viewmodel.TranslateViewModel
 import com.example.plantmate.data.viewmodel.local.EncyclopediaLocalViewModel
 import com.example.plantmate.data.viewmodel.local.ViewModelFactory
+import com.example.plantmate.isIndonesianLanguage
 import com.example.plantmate.model.CareGuideItem
 
 @Composable
@@ -40,6 +42,13 @@ fun CareGuideScreen(
     navController: NavHostController
 ) {
     val app = LocalContext.current.applicationContext as YourApp
+    val translateVM: TranslateViewModel = viewModel()
+    val translatedSections by translateVM.translatedSections.collectAsState()
+
+    LaunchedEffect(careGuide) {
+        val sectionsText = careGuide.section?.map { it.description ?: "" } ?: emptyList()
+        translateVM.translateSections(sectionsText, if (isIndonesianLanguage()) "id" else "en")
+    }
 
     // encyclopedia
     val viewModel: EncyclopediaLocalViewModel =
@@ -164,9 +173,11 @@ fun CareGuideScreen(
                     else -> "Unknown Section"
                 }
 
+                val content = translatedSections.getOrNull(index) ?: section.description ?: "-"
+
                 ExpandableItem(
                     title = title,
-                    content = section.description ?: "-",
+                    content = content,
                     expanded = expandedIndex == index,
                     onClick = {
                         expandedIndex = if (expandedIndex == index) null else index
@@ -221,7 +232,18 @@ fun CareGuideScreen(
                 )
             ) {
                 Text(
-                    text = if (isBookmarked) "Bookmarked" else "Bookmark"
+                    text = if (isBookmarked) {
+                        if (isIndonesianLanguage()){
+                            "Tersimpan"
+                        } else {
+                            "Bookmarked"
+                        }
+                    } else {
+                        if (isIndonesianLanguage()){
+                            "Favorit"
+                        } else {
+                            "Bookmark"
+                        }                    }
                 )
             }
         }

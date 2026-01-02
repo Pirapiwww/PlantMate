@@ -34,7 +34,6 @@ fun BottomNavBar(
             .fillMaxWidth()
             .background(Color.White)
             .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         navbarItems.forEach { item ->
@@ -54,25 +53,28 @@ fun BottomNavBar(
                             restoreState = true
                         }
                     }
-                }
+                },
+                modifier = Modifier.weight(1f) // 🔥 KUNCI DI SINI
             )
-
         }
     }
 }
+
 
 @Composable
 fun BottomNavItem(
     item: NavbarIcon,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val tintColor = if (selected) Color(0xFF4CAF50) else Color.Gray
 
     Column(
-        modifier = Modifier
+        modifier = modifier
+            .fillMaxWidth()
             .clickable { onClick() }
-            .padding(4.dp),
+            .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

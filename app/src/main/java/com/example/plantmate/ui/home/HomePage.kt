@@ -3,21 +3,21 @@ package com.example.plantmate.ui.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -25,12 +25,10 @@ import com.example.plantmate.R
 import com.example.plantmate.YourApp
 import com.example.plantmate.data.DataSource
 import com.example.plantmate.data.viewmodel.local.EncyclopediaLocalViewModel
+import com.example.plantmate.data.viewmodel.local.FormVM.JournalLocalViewModel
 import com.example.plantmate.data.viewmodel.local.LensLocalViewModel
 import com.example.plantmate.data.viewmodel.local.NewsLocalViewModel
-import com.example.plantmate.data.viewmodel.local.FormVM.JournalLocalViewModel
 import com.example.plantmate.ui.components.*
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 
 @Composable
 fun PlantHomeScreen(navController: NavHostController) {
@@ -49,8 +47,8 @@ fun PlantHomeScreen(navController: NavHostController) {
     val lensRow by lensViewModel.lens.collectAsState()
     val journalRow by journalViewModel.allJournals.collectAsState()
 
-    val featureNavItems = DataSource().loadFeature()
-    val navbarItems = DataSource().loadNavbar()
+    val featureNavItems = DataSource.loadFeature()
+    val navbarItems = DataSource.loadNavbar()
 
     Box(
         modifier = Modifier
@@ -64,11 +62,11 @@ fun PlantHomeScreen(navController: NavHostController) {
                 .padding(bottom = 80.dp)
         ) {
 
-            // ---------------------- BANNER ----------------------
+            // ================= BANNER =================
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
+                    .height(180.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.home_img),
@@ -76,43 +74,11 @@ fun PlantHomeScreen(navController: NavHostController) {
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 36.dp, start = 16.dp, end = 16.dp)
-                        .align(Alignment.TopCenter),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(50.dp)
-                            .background(Color.White, RoundedCornerShape(50)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.logo_plantmate_text),
-                            contentDescription = "PlantMate Logo",
-                            modifier = Modifier.height(20.dp),
-                            contentScale = ContentScale.Fit
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
-                            .background(Color.White),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("P", color = Color.Black)
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ============== 4 MENU FITUR ==============
+            // ================= FEATURE MENU =================
             FeatureList(
                 featureList = featureNavItems,
                 onFeatureClick = { feature ->
@@ -127,110 +93,143 @@ fun PlantHomeScreen(navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ========================== JOURNAL ==========================
-            if (journalRow.isNotEmpty()) {
+            // ================= JOURNAL (1 item) =================
+            journalRow.firstOrNull()?.let { item ->
                 HomeSectionTitle(
                     text = stringResource(R.string.my_journal),
                     onSeeDetail = {
                         navController.navigate("journal") {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(0) {
+                                inclusive = true
+                            }
                             launchSingleTop = true
                         }
                     }
                 )
 
-                val pagerState = rememberPagerState(pageCount = { journalRow.size })
-                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
-                    val item = journalRow[page]
+                SwipeNavigateCard(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    onNavigate = {
+                        navController.navigate("journal") {
+                            popUpTo(0) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }                    }
+                ) {
                     JournalCardNoDelete(
                         item = item,
-                        onClick = { id -> navController.navigate("myjournal/home/$id") },
-                        modifier = Modifier
-                            .width(340.dp)
-                            .padding(start = 16.dp)
+                        onClick = { id -> navController.navigate("myjournal/home/$id") }
                     )
                 }
             }
 
-            // ========================== ENCYCLOPEDIA ==========================
-            if (encyclopediaRow.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // ================= ENCYCLOPEDIA (1 item) =================
+            encyclopediaRow.firstOrNull()?.let { item ->
                 HomeSectionTitle(
                     text = stringResource(R.string.encyclopedia_bookmark),
                     onSeeDetail = {
                         navController.navigate("bookmark?tab=1") {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(0) {
+                                inclusive = true
+                            }
                             launchSingleTop = true
                         }
                     }
                 )
 
-                val pagerState = rememberPagerState(pageCount = { encyclopediaRow.size })
-                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
-                    val item = encyclopediaRow[page]
+                SwipeNavigateCard(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    onNavigate = {
+                        navController.navigate("bookmark?tab=1") {
+                            popUpTo(0) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                ) {
                     EncyclopediaCardSimple(
                         item = item,
-                        onClick = { id -> navController.navigate("localCareGuide/Home/$id") },
-                        modifier = Modifier
-                            .width(340.dp)
-                            .padding(start = 16.dp)
+                        onClick = { id -> navController.navigate("localCareGuide/Home/$id") }
                     )
                 }
+
             }
 
-            // ========================== LENS ==========================
-            if (lensRow.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // ================= LENS (1 item) =================
+            lensRow.firstOrNull()?.let { item ->
                 HomeSectionTitle(
                     text = stringResource(R.string.lens_bookmark),
                     onSeeDetail = {
                         navController.navigate("bookmark?tab=0") {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(0) {
+                                inclusive = true
+                            }
                             launchSingleTop = true
                         }
                     }
                 )
-
-                val pagerState = rememberPagerState(pageCount = { lensRow.size })
-                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
-                    val item = lensRow[page]
+                SwipeNavigateCard(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    onNavigate = {
+                        navController.navigate("bookmark?tab=0") {
+                            popUpTo(0) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                ) {
                     LensCardSimple(
                         item = item,
-                        onClick = { id -> navController.navigate("lens/Home/$id") },
+                        onClick = { id -> navController.navigate("lens/Home/$id") }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // ================= NEWS (1 item) =================
+            if (newsList.isNotEmpty()) {
+                HomeSectionTitle(
+                    text = stringResource(R.string.latest_news),
+                    onSeeDetail = {
+                        navController.navigate("plantNews")
+                    }
+                )
+
+                if (isLoading) {
+                    Box(
                         modifier = Modifier
-                            .width(340.dp)
-                            .padding(start = 16.dp)
-                    )
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    SwipeNavigateCard(
+                        modifier = Modifier,
+                        onNavigate = {
+                            navController.navigate("plantNews")
+                        }
+                    ) {
+                        NewsCard(
+                            news = newsList.first(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    }
                 }
             }
-
-            // ========================== NEWS ==========================
-            HomeSectionTitle(
-                text = stringResource(R.string.latest_news),
-                onSeeDetail = { navController.navigate("plantNews") }
-            )
-
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else if (newsList.isNotEmpty()) {
-                val pagerState = rememberPagerState(pageCount = { newsList.size })
-                HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
-                    val item = newsList[page]
-                    NewsCard(
-                        news = item,
-                        modifier = Modifier.width(370.dp)
-                    )
-                }
-            }
-
         }
 
-        // ========================== BOTTOM NAV ==========================
+        // ================= BOTTOM NAV =================
         BottomNavBar(
             navbarItems = navbarItems,
             navController = navController,
@@ -238,6 +237,7 @@ fun PlantHomeScreen(navController: NavHostController) {
         )
     }
 }
+
 
 @Composable
 fun HomeSectionTitle(
@@ -253,10 +253,68 @@ fun HomeSectionTitle(
     ) {
         Text(text, style = MaterialTheme.typography.titleSmall)
         Text(
-            text = stringResource(id = R.string.detail),
+            text = stringResource(id = R.string.detail) + " >>",
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.clickable { onSeeDetail() }
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
+}
+
+@Composable
+fun SwipeNavigateCard(
+    modifier: Modifier = Modifier,
+    onNavigate: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    var offsetX by remember { mutableStateOf(0f) }
+    var hasNavigated by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .draggable(
+                orientation = Orientation.Horizontal,
+                state = rememberDraggableState { delta ->
+                    // CARD KE KIRI (offset negatif)
+                    offsetX = (offsetX + delta).coerceIn(-300f, 0f)
+                },
+                onDragStopped = {
+                    if (offsetX < -160 && !hasNavigated) {
+                        hasNavigated = true
+                        onNavigate()
+                    }
+                    offsetX = 0f
+                }
+            )
+    ) {
+
+        // ===== DETAIL TETAP DI KANAN =====
+        if (offsetX < -40) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.arrow_circle),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.detail),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+        }
+
+        // ===== CARD GESER KE KIRI =====
+        Box(
+            modifier = Modifier.offset { IntOffset(offsetX.toInt(), 0) }
+        ) {
+            content()
+        }
+    }
 }

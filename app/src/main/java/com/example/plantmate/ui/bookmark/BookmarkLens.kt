@@ -1,7 +1,5 @@
 package com.example.plantmate.ui.bookmark
 
-import androidx.navigation.NavHostController
-import com.example.plantmate.data.local.entity.LensEntity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -9,15 +7,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.plantmate.R
+import com.example.plantmate.data.local.entity.LensEntity
+import com.example.plantmate.data.viewmodel.TranslateViewModel
+import com.example.plantmate.isIndonesianLanguage
 
 @Composable
 fun BookmarkLensScreen(
@@ -25,6 +28,17 @@ fun BookmarkLensScreen(
     navController: NavHostController,
     routeBack: String
 ) {
+    val translateVM: TranslateViewModel = viewModel()
+    val translatedResult by translateVM.translatedSections.collectAsState()
+
+    // Translate lens.result saat screen muncul
+    LaunchedEffect(lens) {
+        val textToTranslate = listOfNotNull(lens.result)
+        translateVM.translateSections(
+            textToTranslate,
+            if (isIndonesianLanguage()) "id" else "en"
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -45,20 +59,15 @@ fun BookmarkLensScreen(
                 onClick = {
                     if (routeBack == "Bookmark"){
                         navController.navigate("bookmark?tab=0") {
-                            popUpTo(0) {
-                                inclusive = true
-                            }
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     } else if (routeBack == "Home"){
                         navController.navigate("home") {
-                            popUpTo(0) {
-                                inclusive = true
-                            }
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
-
                 }
             ) {
                 Icon(
@@ -93,7 +102,7 @@ fun BookmarkLensScreen(
                 text = lens.title ?: "-",
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth() // ⬅️ BISA CENTER
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -106,7 +115,6 @@ fun BookmarkLensScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
-
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -142,7 +150,7 @@ fun BookmarkLensScreen(
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Box(modifier = Modifier.padding(16.dp)) {
-                    Text(text = lens.result ?: "-")
+                    Text(text = translatedResult.getOrNull(0) ?: lens.result ?: "-")
                 }
             }
         }

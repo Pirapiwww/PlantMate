@@ -43,7 +43,6 @@ fun PlantEncyclopediaSearchScreen(
     val viewModel: EncyclopediaViewModel = viewModel(
         factory = EncyclopediaViewModelFactory(repo)
     )
-
     val app = LocalContext.current.applicationContext as YourApp
 
     // search (history)

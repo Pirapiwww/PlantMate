@@ -14,8 +14,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plantmate.R
 import com.example.plantmate.YourApp
 import com.example.plantmate.data.DataSource
+import com.example.plantmate.data.DataSource.toStringRes
 import com.example.plantmate.data.local.entity.FormEntity.PlantingEntity
+import com.example.plantmate.data.viewmodel.local.FormVM.JournalLocalViewModel
 import com.example.plantmate.data.viewmodel.local.FormVM.PlantingLocalViewModel
+import com.example.plantmate.isIndonesianLanguage
 import com.example.plantmate.ui.components.dropdowns.JournalDropdown
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -33,66 +36,87 @@ fun PlantingForm(
     val plantingViewModel: PlantingLocalViewModel =
         viewModel(factory = app.viewModelFactory)
 
+    val journalViewModel: JournalLocalViewModel =
+        viewModel(factory = app.viewModelFactory)
+
+    /* ===================== LOAD DATA ===================== */
+
     LaunchedEffect(categoryId) {
         if (categoryId != 0) {
             plantingViewModel.loadById(categoryId)
         }
     }
 
-    val planting by plantingViewModel.selectedPlanting.collectAsState()
+    LaunchedEffect(journalId) {
+        journalViewModel.loadJournalById(journalId)
+    }
 
-    val ds = DataSource()
+    val planting by plantingViewModel.selectedPlanting.collectAsState()
+    val journal by journalViewModel.selectedJournal.collectAsState()
 
     /* ===================== STATE ===================== */
-    var title by rememberSaveable { mutableStateOf("") }
-    var method by rememberSaveable { mutableStateOf<Int?>(null) }
-    var location by rememberSaveable { mutableStateOf<Int?>(null) }
-    var frequency by rememberSaveable { mutableStateOf<Int?>(null) }
-    var amount by rememberSaveable { mutableStateOf<Int?>(null) }
+
+    val title = remember(journal, isIndonesianLanguage()) {
+        journal?.plantName?.let { plantName ->
+            if (isIndonesianLanguage()) "Penanaman $plantName"
+            else "Planting $plantName"
+        } ?: ""
+    }
+
+    var method by rememberSaveable {
+        mutableStateOf<DataSource.PlantingMethod?>(null)
+    }
+    var location by rememberSaveable {
+        mutableStateOf<DataSource.LocationType?>(null)
+    }
+    var frequency by rememberSaveable {
+        mutableStateOf<DataSource.FrequencyType?>(null)
+    }
+    var amount by rememberSaveable {
+        mutableStateOf<DataSource.AmountType?>(null)
+    }
     var notes by rememberSaveable { mutableStateOf("") }
 
     /* ===================== PREFILL ===================== */
+
     LaunchedEffect(planting) {
         planting?.let {
-            title = it.title
-            method = ds.loadMethod().find { res ->
-                context.getString(res) == it.method
-            }
-            location = ds.loadLocation().find { res ->
-                context.getString(res) == it.location
-            }
-            frequency = ds.loadFrequency().find { res ->
-                context.getString(res) == it.frequency
-            }
-            amount = ds.loadAmount().find { res ->
-                context.getString(res) == it.amount
-            }
+            method = DataSource.PlantingMethod.values()
+                .firstOrNull { e -> e.key == it.method }
+
+            location = DataSource.LocationType.values()
+                .firstOrNull { e -> e.key == it.location }
+
+            frequency = DataSource.FrequencyType.values()
+                .firstOrNull { e -> e.key == it.frequency }
+
+            amount = DataSource.AmountType.values()
+                .firstOrNull { e -> e.key == it.amount }
+
             notes = it.note.orEmpty()
         }
     }
 
     val isFormValid =
-        title.isNotBlank() &&
-                method != null &&
+        method != null &&
                 location != null &&
                 frequency != null &&
                 amount != null
 
     val createdDate = remember {
-        SimpleDateFormat(
-            "dd MMM yyyy",
-            Locale("id", "ID")
-        ).format(Date())
+        SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
+            .format(Date())
     }
 
     /* ===================== SEND ENTITY ===================== */
+
     LaunchedEffect(
-        title,
         method,
         location,
         frequency,
         amount,
-        notes
+        notes,
+        title
     ) {
         if (isFormValid) {
             onFormChange(
@@ -100,10 +124,10 @@ fun PlantingForm(
                     id = planting?.id ?: 0,
                     title = title,
                     journalId = journalId,
-                    method = context.getString(method!!),
-                    location = context.getString(location!!),
-                    frequency = context.getString(frequency!!),
-                    amount = context.getString(amount!!),
+                    method = method!!.key,
+                    location = location!!.key,
+                    frequency = frequency!!.key,
+                    amount = amount!!.key,
                     note = notes.ifBlank { null },
                     analysisAI = planting?.analysisAI ?: "",
                     createdDate = planting?.createdDate ?: createdDate
@@ -116,21 +140,25 @@ fun PlantingForm(
 
     /* ===================== UI ===================== */
 
-    Text(stringResource(id = R.string.title), Modifier.padding(top = 16.dp, bottom = 6.dp))
+    Text(
+        text = stringResource(R.string.title),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+
     OutlinedTextField(
         value = title,
-        onValueChange = { title = it },
-        placeholder = {
-            Text(text = stringResource(id = R.string.title))
-        },
-        modifier = Modifier.fillMaxWidth()
+        onValueChange = {},
+        enabled = false,
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = { Text(stringResource(R.string.title)) }
     )
 
     Text(stringResource(R.string.method), Modifier.padding(top = 16.dp, bottom = 6.dp))
     JournalDropdown(
         value = method,
         placeholder = R.string.method,
-        items = ds.loadMethod(),
+        items = DataSource.loadPlantingMethod(),
+        labelRes = { it.toStringRes() },
         onSelected = { method = it }
     )
 
@@ -138,7 +166,8 @@ fun PlantingForm(
     JournalDropdown(
         value = location,
         placeholder = R.string.location,
-        items = ds.loadLocation(),
+        items = DataSource.loadLocation(),
+        labelRes = { it.toStringRes() },
         onSelected = { location = it }
     )
 
@@ -146,7 +175,8 @@ fun PlantingForm(
     JournalDropdown(
         value = frequency,
         placeholder = R.string.frequency,
-        items = ds.loadFrequency(),
+        items = DataSource.loadFrequency(),
+        labelRes = { it.toStringRes() },
         onSelected = { frequency = it }
     )
 
@@ -154,7 +184,8 @@ fun PlantingForm(
     JournalDropdown(
         value = amount,
         placeholder = R.string.amount,
-        items = ds.loadAmount(),
+        items = DataSource.loadAmount(),
+        labelRes = { it.toStringRes() },
         onSelected = { amount = it }
     )
 

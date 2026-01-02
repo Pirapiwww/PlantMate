@@ -16,7 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,10 +27,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plantmate.R
 import com.example.plantmate.data.local.entity.FormEntity.PlantingEntity
 import com.example.plantmate.data.local.entity.FormEntity.PreparationEntity
 import com.example.plantmate.data.local.entity.FormEntity.TreatmentEntity
+import com.example.plantmate.data.viewmodel.TranslateViewModel
+import com.example.plantmate.isIndonesianLanguage
 
 @Composable
 fun PreparationCard(
@@ -49,7 +52,7 @@ fun PreparationCard(
     ) {
         Image(
             painter = painterResource(id = R.drawable.preparation),
-            contentDescription = "Preparation",
+            contentDescription = null,
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(8.dp)),
@@ -58,26 +61,25 @@ fun PreparationCard(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = item.title,
+                text = item.title, // 👈 langsung
                 fontWeight = FontWeight.Bold,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+
             Spacer(modifier = Modifier.height(6.dp))
+
             Text(
-                text = "${stringResource(id = R.string.created)} ${item.createdDate}",
+                text = "${stringResource(R.string.created)} ${item.createdDate}",
                 style = MaterialTheme.typography.bodySmall
             )
         }
 
         Icon(
             painter = painterResource(id = R.drawable.ic_delete),
-            contentDescription = "Delete",
+            contentDescription = null,
             tint = Color.Red,
             modifier = Modifier
                 .size(28.dp)
@@ -103,7 +105,7 @@ fun PlantingCard(
     ) {
         Image(
             painter = painterResource(id = R.drawable.planting),
-            contentDescription = "Preparation",
+            contentDescription = "Planting",
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(8.dp)),
@@ -117,9 +119,10 @@ fun PlantingCard(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = item.title,
+                text = item.title, // LANGSUNG dari Room
                 fontWeight = FontWeight.Bold,
-                maxLines = 1,
+                maxLines = 2,
+                minLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -128,6 +131,7 @@ fun PlantingCard(
                 style = MaterialTheme.typography.bodySmall
             )
         }
+
         Icon(
             painter = painterResource(id = R.drawable.ic_delete),
             contentDescription = "Delete",
@@ -156,7 +160,7 @@ fun TreatmentCard(
     ) {
         Image(
             painter = painterResource(id = R.drawable.treatment),
-            contentDescription = "Preparation",
+            contentDescription = "Treatment",
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(8.dp)),
@@ -170,9 +174,10 @@ fun TreatmentCard(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = item.title,
+                text = item.title, // LANGSUNG dari Room
                 fontWeight = FontWeight.Bold,
-                maxLines = 1,
+                maxLines = 2,
+                minLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -192,4 +197,3 @@ fun TreatmentCard(
         )
     }
 }
-

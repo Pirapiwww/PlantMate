@@ -128,4 +128,43 @@ class PlantingLocalViewModel(
             }
         }
     }
+
+    fun getSelectedPlantingAsString(
+        isIndonesianLanguage: Boolean
+    ): String? {
+        val planting = _selectedPlanting.value ?: return null
+
+        return if (isIndonesianLanguage) {
+            // 🇮🇩 Bahasa Indonesia
+            buildString {
+                appendLine("Judul: ${planting.title}")
+                appendLine("Metode Penanaman: ${planting.method}")
+                appendLine("Lokasi Penanaman: ${planting.location}")
+                appendLine("Frekuensi penyiraman: ${planting.frequency}")
+                appendLine("Banyak Penyiraman: ${planting.amount}")
+
+                planting.note?.takeIf { it.isNotBlank() }?.let {
+                    appendLine("Catatan Tambahan: $it")
+                }
+
+                appendLine("Tanggal dibuat: ${planting.createdDate}")
+            }
+        } else {
+            // 🇬🇧 English
+            buildString {
+                appendLine("Title: ${planting.title}")
+                appendLine("Planting method: ${planting.method}")
+                appendLine("Planting Location: ${planting.location}")
+                appendLine("Watering frequency: ${planting.frequency}")
+                appendLine("Watering amount: ${planting.amount}")
+
+                planting.note?.takeIf { it.isNotBlank() }?.let {
+                    appendLine("Additional Note: $it")
+                }
+
+                appendLine("Created date: ${planting.createdDate}")
+            }
+        }
+    }
+
 }

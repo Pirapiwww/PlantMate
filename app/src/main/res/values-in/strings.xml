@@ -7,12 +7,17 @@
     <string name="no_news">Berita Tidak Ditemukan</string>
     <string name="camera">Izin Kamera Diperlukan</string>
     <string name="image_error">Gagal Mengambil Gambar</string>
+    <string name="generate_analysis">Buat Analisis</string>
+    <string name="loading">Memproses...</string>
+    <string name="labelling">Label Gambar</string>
+    <string name="bookmark">Favorit</string>
 
     <!-- Bottom Navbar -->
     <string name="navbar_home">Beranda</string>
     <string name="navbar_journal">Jurnal</string>
     <string name="navbar_bookmark">Favorit</string>
     <string name="navbar_profile">Profil</string>
+    <string name="navbar_settings">Pengaturan</string>
 
     <!-- Feature -->
     <string name="plant_journal">Plant Journal</string>
@@ -26,7 +31,7 @@
     <string name="lens_bookmark">Plant Lens Tersimpan</string>
     <string name="latest_news">Plant News Terbaru</string>
 
-    <string name="detail">Selengkapnya >></string>
+    <string name="detail">Selengkapnya</string>
 
     <!-- Menu My Journal -->
     <string name="preparation">Persiapan</string>
@@ -144,7 +149,7 @@
     <string name="lens_title">Judul Wajib Diisi</string>
 
     <!-- Plant Encyclopedia Feature -->
-    <string name="search">Cari Tanaman...</string>
+    <string name="search">Cari Tanaman... (Eng Only)</string>
     <string name="search_result">Hasil Pencarian</string>
     <string name="search_history">Histori Pencarian</string>
     <string name="history_clear">Hapus</string>

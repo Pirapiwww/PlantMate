@@ -126,4 +126,43 @@ class TreatmentLocalViewModel(
             }
         }
     }
+
+    fun getSelectedTreatmentAsString(
+        isIndonesianLanguage: Boolean
+    ): String? {
+        val treatment = _selectedTreatment.value ?: return null
+
+        return if (isIndonesianLanguage) {
+            // 🇮🇩 Bahasa Indonesia
+            buildString {
+                appendLine("Judul: ${treatment.title}")
+                appendLine("Kondisi tanaman: ${treatment.plantCondition}")
+                appendLine("Jenis perawatan: ${treatment.treatmentType}")
+                appendLine("Masalah: ${treatment.problem}")
+                appendLine("Solusi: ${treatment.solution}")
+
+                treatment.note?.takeIf { it.isNotBlank() }?.let {
+                    appendLine("Catatan: $it")
+                }
+
+                appendLine("Tanggal dibuat: ${treatment.createdDate}")
+            }
+        } else {
+            // 🇬🇧 English
+            buildString {
+                appendLine("Title: ${treatment.title}")
+                appendLine("Plant condition: ${treatment.plantCondition}")
+                appendLine("Treatment type: ${treatment.treatmentType}")
+                appendLine("Problem: ${treatment.problem}")
+                appendLine("Solution: ${treatment.solution}")
+
+                treatment.note?.takeIf { it.isNotBlank() }?.let {
+                    appendLine("Notes: $it")
+                }
+
+                appendLine("Created date: ${treatment.createdDate}")
+            }
+        }
+    }
+
 }

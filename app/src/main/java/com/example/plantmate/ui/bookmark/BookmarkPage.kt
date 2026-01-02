@@ -3,6 +3,8 @@ package com.example.plantmate.ui.bookmark
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
@@ -83,7 +85,7 @@ fun BookmarkScreen(
     // ======================
     // UI
     // ======================
-    val navbarItems = DataSource().loadNavbar()
+    val navbarItems = DataSource.loadNavbar()
     val topColor = Color(0xFFDDE6C7)
 
     Box(
@@ -94,26 +96,35 @@ fun BookmarkScreen(
 
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // ======================
-            // TOP BAR
-            // ======================
-            Row(
+            // ============================
+            //           TOP BAR
+            // ============================
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(topColor)
-                    .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .background(Color(0xFFDDE6C7))
+                    .padding(top = 38.dp, bottom = 16.dp, start = 12.dp, end = 12.dp)
             ) {
-                Spacer(modifier = Modifier.width(12.dp))
+                // Dummy IconButton di kiri untuk memastikan tinggi sama
+                IconButton(
+                    onClick = {},
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    enabled = false // non-aktif
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.Transparent // invisible
+                    )
+                }
 
                 Text(
-                    text = stringResource(id = R.string.navbar_bookmark),
+                    text = stringResource(id = R.string.my_journal),
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center)
                 )
-
-                Spacer(modifier = Modifier.width(24.dp))
             }
 
             // ======================

@@ -18,6 +18,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
+// =========================================================================
+// Nama Kelompok: ParaDX, Nama APlikasi: PlantMate
+// Anggota:
+// 1. Muhammad Rafi Rizqullah (23523222)
+// 2. M. Nur Fadhil AS (23523233)
+// 3. Muhammad Rizky Prayoga (23523225)
+// =========================================================================
+
 val LocalViewModelFactory = staticCompositionLocalOf<ViewModelProvider.Factory> {
     error("No ViewModelFactory provided")
 }

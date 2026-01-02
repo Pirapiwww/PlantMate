@@ -1,42 +1,31 @@
 package com.example.plantmate.ui.bookmark
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.plantmate.R
 import com.example.plantmate.data.local.entity.EncyclopediaEntity
+import com.example.plantmate.data.viewmodel.TranslateViewModel
+import com.example.plantmate.isIndonesianLanguage
 import com.example.plantmate.ui.careguide.ExpandableItem
 
 @Composable
@@ -46,6 +35,22 @@ fun BookmarkEncyclopediaScreen(
     routeBack: String
 ) {
     var expandedIndex by remember { mutableStateOf<Int?>(null) }
+
+    val translateVM: TranslateViewModel = viewModel()
+    val translatedSections by translateVM.translatedSections.collectAsState()
+
+    // Kirim teks untuk diterjemahkan saat screen muncul
+    LaunchedEffect(encyclopedia) {
+        val sectionsText = listOfNotNull(
+            encyclopedia.sunlightDesc,
+            encyclopedia.wateringDesc,
+            encyclopedia.pruningDesc
+        )
+        translateVM.translateSections(
+            sectionsText,
+            if (isIndonesianLanguage()) "id" else "en"
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -65,22 +70,17 @@ fun BookmarkEncyclopediaScreen(
         ) {
             IconButton(
                 onClick = {
-                    if (routeBack == "Bookmark"){
+                    if (routeBack == "Bookmark") {
                         navController.navigate("bookmark?tab=1") {
-                            popUpTo(0) {
-                                inclusive = true
-                            }
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
-                    } else if (routeBack == "Home"){
+                    } else if (routeBack == "Home") {
                         navController.navigate("home") {
-                            popUpTo(0) {
-                                inclusive = true
-                            }
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }
-
                 }
             ) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -105,7 +105,6 @@ fun BookmarkEncyclopediaScreen(
         ) {
 
             Spacer(modifier = Modifier.height(16.dp))
-
 
             //---------------------
             // GAMBAR
@@ -139,7 +138,6 @@ fun BookmarkEncyclopediaScreen(
                 }
             }
 
-
             //------------------------
             // NAME + SCIENTIFIC NAME
             //------------------------
@@ -164,9 +162,8 @@ fun BookmarkEncyclopediaScreen(
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-
             //------------------------
-            // EXPANDABLE SECTIONS
+            // EXPANDABLE SECTIONS DENGAN TRANSLATE
             //------------------------
             val sections = listOfNotNull(
                 Triple("Sunlight", encyclopedia.sunlightDesc, R.string.sunlight),
@@ -176,9 +173,11 @@ fun BookmarkEncyclopediaScreen(
 
             sections.forEachIndexed { index, (key, value, stringId) ->
 
+                val content = translatedSections.getOrNull(index) ?: value ?: "-"
+
                 ExpandableItem(
                     title = stringResource(id = stringId),
-                    content = value ?: "-",
+                    content = content,
                     expanded = expandedIndex == index,
                     onClick = { expandedIndex = if (expandedIndex == index) null else index }
                 )

@@ -27,14 +27,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.plantmate.R
 import com.example.plantmate.YourApp
-import com.example.plantmate.data.viewmodel.local.FormVM.JournalLocalViewModel
-import com.example.plantmate.data.viewmodel.local.FormVM.PlantingLocalViewModel
-import com.example.plantmate.data.viewmodel.local.FormVM.PreparationLocalViewModel
-import com.example.plantmate.data.viewmodel.local.FormVM.TreatmentLocalViewModel
+import com.example.plantmate.data.viewmodel.AnalysisViewModel
+import com.example.plantmate.data.viewmodel.local.FormVM.*
 import com.example.plantmate.ui.components.JournalCardReadOnly
-import com.example.plantmate.ui.plantjournal.content.PlantingContent
-import com.example.plantmate.ui.plantjournal.content.PreparationContent
-import com.example.plantmate.ui.plantjournal.content.TreatmentContent
+import com.example.plantmate.ui.plantjournal.content.*
+import kotlinx.coroutines.launch
 
 @Composable
 fun PlantJournalResultScreen(
@@ -43,15 +40,25 @@ fun PlantJournalResultScreen(
     navController: NavHostController
 ) {
     val app = LocalContext.current.applicationContext as YourApp
+    val scope = rememberCoroutineScope()
+
+    /* ================= VIEWMODELS ================= */
 
     val journalViewModel: JournalLocalViewModel =
         viewModel(factory = app.viewModelFactory)
+
     val plantingViewModel: PlantingLocalViewModel =
         viewModel(factory = app.viewModelFactory)
+
     val preparationViewModel: PreparationLocalViewModel =
         viewModel(factory = app.viewModelFactory)
+
     val treatmentViewModel: TreatmentLocalViewModel =
         viewModel(factory = app.viewModelFactory)
+
+    val analysisViewModel: AnalysisViewModel = viewModel()
+
+    /* ================= STATES ================= */
 
     val journal by journalViewModel.selectedJournal.collectAsState()
     val preparation by preparationViewModel.selectedPreparation.collectAsState()
@@ -59,18 +66,13 @@ fun PlantJournalResultScreen(
     val treatment by treatmentViewModel.selectedTreatment.collectAsState()
 
     var expanded by rememberSaveable { mutableStateOf(false) }
+    var analysisText by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
-    val analysisText = """
-        Status Kesehatan Tanaman: 🌱 Sehat (Probabilitas: 0.92)
-        Kemungkinan Penyakit:
-            - Leaf Spot (Prob: 0.18)
-            - Powdery Mildew (Prob: 0.09)
-        Klasifikasi Tumbuhan:
-            - Capsicum annuum (Prob: 0.87)
-            - Solanum lycopersicum (Prob: 0.12)
-    """.trimIndent()
+    val isIndonesianLanguage = true // nanti bisa dari settings
 
     /* ================= LOAD FORM ENTITY ================= */
+
     LaunchedEffect(categoryId, type) {
         when (type) {
             "preparation" -> preparationViewModel.loadById(categoryId)
@@ -80,6 +82,7 @@ fun PlantJournalResultScreen(
     }
 
     /* ================= LOAD JOURNAL ================= */
+
     LaunchedEffect(preparation, planting, treatment) {
         val journalId =
             preparation?.journalId
@@ -92,13 +95,15 @@ fun PlantJournalResultScreen(
     }
 
     /* ================= ROOT ================= */
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        /* ================= TOP BAR (FIXED) ================= */
+        /* ================= TOP BAR ================= */
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,10 +129,11 @@ fun PlantJournalResultScreen(
             Spacer(modifier = Modifier.width(24.dp))
         }
 
-        /* ================= SCROLLABLE CONTENT ================= */
+        /* ================= CONTENT ================= */
+
         Column(
             modifier = Modifier
-                .weight(1f) // ⭐ penting
+                .weight(1f)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -138,7 +144,7 @@ fun PlantJournalResultScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            var details = when(type){
+            val details = when (type) {
                 "preparation" -> stringResource(id = R.string.preparation_detail)
                 "planting" -> stringResource(id = R.string.planting_detail)
                 "treatment" -> stringResource(id = R.string.treatment_detail)
@@ -157,7 +163,64 @@ fun PlantJournalResultScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            /* ================= GENERATE BUTTON ================= */
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        val preparationText =
+                            preparationViewModel
+                                .getSelectedPreparationAsString(isIndonesianLanguage)
+
+                        val plantingText =
+                            plantingViewModel
+                                .getSelectedPlantingAsString(isIndonesianLanguage)
+
+                        val treatmentText =
+                            treatmentViewModel
+                                .getSelectedTreatmentAsString(isIndonesianLanguage)
+
+                        val formInput = buildString {
+                            preparationText?.let {
+                                appendLine("=== DATA PERSIAPAN ===")
+                                appendLine(it)
+                                appendLine()
+                            }
+                            plantingText?.let {
+                                appendLine("=== DATA PENANAMAN ===")
+                                appendLine(it)
+                                appendLine()
+                            }
+                            treatmentText?.let {
+                                appendLine("=== DATA PERAWATAN ===")
+                                appendLine(it)
+                            }
+                        }
+
+                        if (formInput.isNotBlank()) {
+                            isLoading = true
+                            analysisText = analysisViewModel.sendAnalysis(
+                                formInput,
+                                isIndonesianLanguage
+                            )
+                            isLoading = false
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            ) {
+                Text(
+                    if (isLoading)
+                        stringResource(id = R.string.loading)
+                    else
+                        stringResource(id = R.string.generate_analysis)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = stringResource(id = R.string.lens_result),
@@ -166,6 +229,8 @@ fun PlantJournalResultScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            /* ================= RESULT ================= */
+
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -173,13 +238,26 @@ fun PlantJournalResultScreen(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
-                Text(
-                    text = analysisText,
-                    modifier = Modifier.padding(16.dp)
-                )
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    Text(
+                        text = analysisText,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState())
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            /* ================= SAVE ================= */
 
             Button(
                 onClick = {
@@ -197,7 +275,8 @@ fun PlantJournalResultScreen(
                         launchSingleTop = true
                     }
                 },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                enabled = analysisText.isNotBlank()
             ) {
                 Text(stringResource(id = R.string.save))
             }
@@ -205,8 +284,8 @@ fun PlantJournalResultScreen(
     }
 }
 
-
 /* ================= EXPANDABLE CARD ================= */
+
 @Composable
 fun ExpandableCard(
     title: String,

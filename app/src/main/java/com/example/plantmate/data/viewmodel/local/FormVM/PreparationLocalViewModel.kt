@@ -126,4 +126,43 @@ class PreparationLocalViewModel(
             }
         }
     }
+
+    fun getSelectedPreparationAsString(
+        isIndonesianLanguage: Boolean
+    ): String? {
+        val preparation = _selectedPreparation.value ?: return null
+
+        return if (isIndonesianLanguage) {
+            // 🇮🇩 Bahasa Indonesia
+            buildString {
+                appendLine("Judul: ${preparation.title}")
+                appendLine("Jenis tanaman: ${preparation.plantType}")
+                appendLine("Sumber tanaman: ${preparation.source}")
+                appendLine("Jenis tanah: ${preparation.soilType}")
+                appendLine("Jenis pupuk: ${preparation.fertilizerType}")
+
+                preparation.note?.takeIf { it.isNotBlank() }?.let {
+                    appendLine("Catatan: $it")
+                }
+
+                appendLine("Tanggal dibuat: ${preparation.createdDate}")
+            }
+        } else {
+            // 🇬🇧 English
+            buildString {
+                appendLine("Title: ${preparation.title}")
+                appendLine("Plant type: ${preparation.plantType}")
+                appendLine("Plant source: ${preparation.source}")
+                appendLine("Soil type: ${preparation.soilType}")
+                appendLine("Fertilizer type: ${preparation.fertilizerType}")
+
+                preparation.note?.takeIf { it.isNotBlank() }?.let {
+                    appendLine("Notes: $it")
+                }
+
+                appendLine("Created date: ${preparation.createdDate}")
+            }
+        }
+    }
+
 }

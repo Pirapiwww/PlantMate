@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -157,7 +158,7 @@ fun PlantJournalScreen(
 
         /* ================= DROPDOWN JOURNAL ================= */
         if (!isEditMode) {
-            Box(modifier = Modifier.padding(16.dp)) {
+            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
 
                 ExposedDropdownMenuBox(
                     expanded = expanded,
@@ -209,25 +210,30 @@ fun PlantJournalScreen(
 
         /* ================= JOURNAL CARD ================= */
         if (journal != null && (isEditMode || selectedJournalId != null)) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                 JournalCardReadOnly(item = journal!!)
             }
         }
 
         /* ================= TAB ================= */
         if (journal != null && (isEditMode || selectedJournalId != null)) {
+            val tabs = listOf(
+                R.string.preparation,
+                R.string.planting,
+                R.string.treatment
+            )
+
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Color.White
             ) {
-                listOf("Preparation", "Planting", "Treatment")
-                    .forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = { Text(title) }
-                        )
-                    }
+                tabs.forEachIndexed { index, titleRes ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = { Text(stringResource(id = titleRes)) }
+                    )
+                }
             }
         }
 
@@ -237,7 +243,7 @@ fun PlantJournalScreen(
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 when (selectedTab) {
                     0 -> PreparationForm(

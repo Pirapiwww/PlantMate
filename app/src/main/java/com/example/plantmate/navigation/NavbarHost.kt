@@ -15,11 +15,9 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.plantmate.data.local.AppDatabase
 import com.example.plantmate.data.repository.EncyclopediaRepository
-import com.example.plantmate.data.repository.local.EncyclopediaLocalRepository
 import com.example.plantmate.data.viewmodel.EncyclopediaViewModel
 import com.example.plantmate.data.viewmodel.EncyclopediaViewModelFactory
 import com.example.plantmate.data.viewmodel.local.EncyclopediaLocalViewModel
-import com.example.plantmate.data.viewmodel.local.ViewModelFactory
 import com.example.plantmate.model.CareGuideItem
 import com.example.plantmate.ui.bookmark.BookmarkEncyclopediaScreen
 import com.example.plantmate.ui.bookmark.BookmarkScreen
@@ -31,7 +29,7 @@ import com.example.plantmate.ui.plantjournal.PlantJournalScreen
 import com.example.plantmate.ui.plantlens.PlantLensInputScreen
 import com.example.plantmate.ui.plantlens.PlantLensResultScreen
 import com.example.plantmate.ui.plantnews.PlantNewsScreen
-import com.example.plantmate.ui.profile.ProfileScreen
+import com.example.plantmate.ui.settings.SettingsScreen
 
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -39,8 +37,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import com.example.plantmate.YourApp
-import com.example.plantmate.data.repository.NewsRepository
-import com.example.plantmate.data.repository.local.NewsLocalRepository
+import com.example.plantmate.data.api.PlantIdApiProvider
 import com.example.plantmate.data.viewmodel.local.LensLocalViewModel
 import com.example.plantmate.ui.bookmark.BookmarkLensScreen
 import com.example.plantmate.ui.myjournal.JournalCategoryResultScreen
@@ -66,7 +63,7 @@ fun NavbarApp(
         // HOME
         composable("home") { PlantHomeScreen(navController) }
         composable("journal") { MyJournalScreen(navController) }
-        composable("profile") { ProfileScreen(navController) }
+        composable("settings") { SettingsScreen(navController) }
         composable(
             route = "bookmark?tab={tab}",
             arguments = listOf(

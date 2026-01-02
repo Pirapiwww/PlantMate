@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun PlantMateTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     MaterialTheme(

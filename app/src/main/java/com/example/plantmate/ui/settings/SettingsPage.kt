@@ -1,4 +1,4 @@
-package com.example.plantmate.ui.profile
+package com.example.plantmate.ui.settings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,9 +26,9 @@ import com.example.plantmate.setLanguage
 import java.util.Locale
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun SettingsScreen(navController: NavHostController) {
 
-    val navbarItems = DataSource().loadNavbar()
+    val navbarItems = DataSource.loadNavbar()
 
     var languageMenuExpanded by remember { mutableStateOf(false) }
 
@@ -51,7 +51,7 @@ fun ProfileScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .height(300.dp)
                     .paint(
-                        painter = painterResource(id = R.drawable.profile_bg),
+                        painter = painterResource(id = R.drawable.settings_bg),
                         contentScale = ContentScale.Crop
                     ),
                 contentAlignment = Alignment.TopCenter
@@ -72,7 +72,7 @@ fun ProfileScreen(navController: NavHostController) {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                            contentDescription = "Profile",
+                            contentDescription = null,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -80,8 +80,8 @@ fun ProfileScreen(navController: NavHostController) {
                     Spacer(modifier = Modifier.height(40.dp))
 
                     Text(
-                        text = "Unknown",
-                        fontSize = 20.sp,
+                        text = stringResource(R.string.navbar_settings),
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
@@ -99,12 +99,11 @@ fun ProfileScreen(navController: NavHostController) {
                     .padding(horizontal = 22.dp)
             ) {
 
-                MenuItem(
-                    title = stringResource(R.string.account)
-                )
-
                 // ---------- LANGUAGE DROPDOWN ----------
-                Box {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.TopEnd // <-- pastikan anchor di kanan
+                ) {
                     MenuItem(
                         title = stringResource(R.string.language),
                         trailingText = currentLanguage,
@@ -113,9 +112,9 @@ fun ProfileScreen(navController: NavHostController) {
 
                     DropdownMenu(
                         expanded = languageMenuExpanded,
-                        onDismissRequest = { languageMenuExpanded = false }
+                        onDismissRequest = { languageMenuExpanded = false },
+                        modifier = Modifier.width(200.dp) // sesuaikan lebar menu
                     ) {
-
                         DropdownMenuItem(
                             text = { Text("Bahasa Indonesia") },
                             onClick = {
@@ -134,11 +133,7 @@ fun ProfileScreen(navController: NavHostController) {
                     }
                 }
 
-                // ---------- LOGOUT ----------
-                MenuItem(
-                    title = stringResource(R.string.logout),
-                    titleColor = MaterialTheme.colorScheme.error
-                )
+
             }
 
             Spacer(modifier = Modifier.weight(1f))

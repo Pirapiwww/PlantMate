@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,6 +41,8 @@ import com.example.plantmate.data.viewmodel.local.FormVM.JournalLocalViewModel
 import com.example.plantmate.data.viewmodel.local.FormVM.PlantingLocalViewModel
 import com.example.plantmate.data.viewmodel.local.FormVM.PreparationLocalViewModel
 import com.example.plantmate.data.viewmodel.local.FormVM.TreatmentLocalViewModel
+import com.example.plantmate.data.viewmodel.TranslateViewModel
+import com.example.plantmate.isIndonesianLanguage
 import com.example.plantmate.ui.components.JournalCardReadOnly
 import com.example.plantmate.ui.plantjournal.ExpandableCard
 import com.example.plantmate.ui.plantjournal.content.PlantingContent
@@ -68,6 +71,8 @@ fun JournalCategoryResultScreen(
     val planting by plantingViewModel.selectedPlanting.collectAsState()
     val treatment by treatmentViewModel.selectedTreatment.collectAsState()
 
+    val translateVM: TranslateViewModel = viewModel()
+
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     /* ================= LOAD FORM ENTITY ================= */
@@ -91,21 +96,38 @@ fun JournalCategoryResultScreen(
         }
     }
 
-    /* ================= ANALYSIS AI FROM ROOM ================= */
+    /* ================= ANALYSIS AI ================= */
     val analysisAI =
         preparation?.analysisAI
             ?: planting?.analysisAI
             ?: treatment?.analysisAI
             ?: "-"
 
-    /* ================= JOURNAL ID FROM ROOM ================= */
+    var translatedAnalysisAI by remember { mutableStateOf(analysisAI) }
+
+    LaunchedEffect(analysisAI) {
+        if (analysisAI.isNotBlank() && analysisAI != "-") {
+            // Memanggil TranslateViewModel
+            translateVM.translateSections(listOf(analysisAI), targetLanguage = if (isIndonesianLanguage()) "id" else "en")
+        } else {
+            translatedAnalysisAI = "-"
+        }
+    }
+
+    // Observasi hasil translate ML Kit
+    val translatedSections by translateVM.translatedSections.collectAsState()
+    if (translatedSections.isNotEmpty()) {
+        translatedAnalysisAI = translatedSections[0]
+    }
+
+    /* ================= JOURNAL ID ================= */
     val journalId =
         preparation?.journalId
             ?: planting?.journalId
             ?: treatment?.journalId
             ?: "-"
 
-    /* ================= ROOT ================= */
+    /* ================= ROOT UI ================= */
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,9 +145,7 @@ fun JournalCategoryResultScreen(
             IconButton(
                 onClick = {
                     navController.navigate("myjournal/journal/$journalId") {
-                        popUpTo(0) {
-                            inclusive = true
-                        }
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
@@ -193,7 +213,7 @@ fun JournalCategoryResultScreen(
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Text(
-                    text = analysisAI.ifBlank { "-" },
+                    text = translatedAnalysisAI,
                     modifier = Modifier.padding(16.dp)
                 )
             }

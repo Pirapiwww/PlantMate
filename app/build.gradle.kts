@@ -59,8 +59,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    // Navigation Compose
+    // Navigation Compose (VERSI LAMA TETAP ADA)
     implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.navigation:navigation-compose:2.7.2")
 
     // Coil image loader
     implementation("io.coil-kt:coil-compose:2.6.0")
@@ -80,23 +81,42 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-    // ViewModel Compose
+    // ViewModel Compose (LAMA)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    // ✅ INI YANG KURANG (DITAMBAHKAN)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    // ROOM Database (local)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    // ROOM Database
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation(libs.androidx.appcompat)
     kapt("androidx.room:room-compiler:2.6.1")
 
-    implementation("androidx.navigation:navigation-compose:2.7.2")
+    // Compose Animation & Accompanist (LAMA, TETAP ADA)
     implementation("androidx.compose.animation:animation:1.6.1")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
 
+    // Accompanist core (WAJIB untuk animation nav)
+    implementation("com.google.accompanist:accompanist-navigation-material:0.34.0")
 
+// Compose animation runtime (dibutuhkan accompanist lama)
+    implementation("androidx.compose.animation:animation")
+
+// Compose runtime (accompanist tidak selalu resolve dari BOM)
+    implementation("androidx.compose.runtime:runtime")
+
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+    // ML Kit Image Labeling
+    implementation("com.google.mlkit:image-labeling:17.0.9")
+
+    // ML Kit Translate
+    implementation("com.google.mlkit:translate:16.1.2")
+    implementation("com.google.mlkit:common:16.0.0")
 
     // Tests
     testImplementation(libs.junit)
