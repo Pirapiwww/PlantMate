@@ -76,7 +76,7 @@ fun PlantLensResultScreen(
             val plantLabels = labels.filter {
                 val l = it.label.lowercase()
                 l.contains("plant") || l.contains("vegetable") ||
-                        l.contains("fruit") || l.contains("flower")
+                        l.contains("fruit") || l.contains("flower") || l.contains("insect")
             }
 
             val maxPlantConfidence: Float = (plantLabels.maxOfOrNull { it.confidence } ?: 0f) * 100f

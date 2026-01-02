@@ -143,7 +143,11 @@ fun PreparationForm(
 
     /* ================= UI (TIDAK DIUBAH) ================= */
 
-    Text(stringResource(id = R.string.title), Modifier.padding(top = 16.dp, bottom = 6.dp))
+    Text(
+        text = stringResource(id = R.string.title),
+        modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)
+    )
+
     OutlinedTextField(
         value = title,
         onValueChange = {},

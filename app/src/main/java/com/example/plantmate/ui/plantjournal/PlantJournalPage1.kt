@@ -75,10 +75,8 @@ fun PlantJournalScreen(
 
     /* ================= SET TAB ================= */
     LaunchedEffect(type) {
-        when (type) {
-            "preparation" -> selectedTab = 0
-            "planting" -> selectedTab = 1
-            "treatment" -> selectedTab = 2
+        if (isEditMode) {
+            selectedTab = 0
         }
     }
 
@@ -129,10 +127,10 @@ fun PlantJournalScreen(
             IconButton(
                 onClick = {
                     if (isEditMode) {
-                        when (selectedTab) {
-                            0 -> preparation?.let { preparationViewModel.deletePreparation(it) }
-                            1 -> planting?.let { plantingViewModel.deletePlanting(it) }
-                            2 -> treatment?.let { treatmentViewModel.deleteTreatment(it) }
+                        when (type) {
+                            "preparation" -> preparation?.let { preparationViewModel.deletePreparation(it) }
+                            "planting" -> planting?.let { plantingViewModel.deletePlanting(it) }
+                            "treatment" -> treatment?.let { treatmentViewModel.deleteTreatment(it) }
                         }
 
                         navController.navigate("home") {
@@ -159,7 +157,6 @@ fun PlantJournalScreen(
         /* ================= DROPDOWN JOURNAL ================= */
         if (!isEditMode) {
             Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }
@@ -168,8 +165,7 @@ fun PlantJournalScreen(
                         value = journals.firstOrNull { it.id == selectedJournalId }?.plantName ?: "",
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text(text = stringResource(id = R.string.select_journal)) },
-                        placeholder = { Text(text = stringResource(id = R.string.select_journal)) },
+                        label = { Text(stringResource(id = R.string.select_journal)) },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded)
                         },
@@ -182,7 +178,6 @@ fun PlantJournalScreen(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-
                         journals.forEach { item ->
                             DropdownMenuItem(
                                 text = { Text(item.plantName) },
@@ -210,18 +205,29 @@ fun PlantJournalScreen(
 
         /* ================= JOURNAL CARD ================= */
         if (journal != null && (isEditMode || selectedJournalId != null)) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 JournalCardReadOnly(item = journal!!)
             }
         }
 
         /* ================= TAB ================= */
         if (journal != null && (isEditMode || selectedJournalId != null)) {
-            val tabs = listOf(
-                R.string.preparation,
-                R.string.planting,
-                R.string.treatment
-            )
+
+            val tabs = if (isEditMode) {
+                listOf(
+                    when (type) {
+                        "preparation" -> R.string.preparation
+                        "planting" -> R.string.planting
+                        else -> R.string.treatment
+                    }
+                )
+            } else {
+                listOf(
+                    R.string.preparation,
+                    R.string.planting,
+                    R.string.treatment
+                )
+            }
 
             TabRow(
                 selectedTabIndex = selectedTab,
@@ -230,8 +236,13 @@ fun PlantJournalScreen(
                 tabs.forEachIndexed { index, titleRes ->
                     Tab(
                         selected = selectedTab == index,
-                        onClick = { selectedTab = index },
-                        text = { Text(stringResource(id = titleRes)) }
+                        onClick = {
+                            if (!isEditMode) selectedTab = index
+                        },
+                        enabled = !isEditMode,
+                        text = {
+                            Text(text = stringResource(id = titleRes))
+                        }
                     )
                 }
             }
@@ -243,22 +254,46 @@ fun PlantJournalScreen(
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(16.dp)
             ) {
-                when (selectedTab) {
-                    0 -> PreparationForm(
+                when {
+                    isEditMode && type == "preparation" -> {
+                        PreparationForm(
+                            categoryId = categoryId,
+                            journalId = journal!!.id,
+                            onFormChange = { preparationEntity = it }
+                        )
+                    }
+
+                    isEditMode && type == "planting" -> {
+                        PlantingForm(
+                            categoryId = categoryId,
+                            journalId = journal!!.id,
+                            onFormChange = { plantingEntity = it }
+                        )
+                    }
+
+                    isEditMode && type == "treatment" -> {
+                        TreatmentForm(
+                            categoryId = categoryId,
+                            journalId = journal!!.id,
+                            onFormChange = { treatmentEntity = it }
+                        )
+                    }
+
+                    selectedTab == 0 -> PreparationForm(
                         categoryId = categoryId,
                         journalId = journal!!.id,
                         onFormChange = { preparationEntity = it }
                     )
 
-                    1 -> PlantingForm(
+                    selectedTab == 1 -> PlantingForm(
                         categoryId = categoryId,
                         journalId = journal!!.id,
                         onFormChange = { plantingEntity = it }
                     )
 
-                    2 -> TreatmentForm(
+                    else -> TreatmentForm(
                         categoryId = categoryId,
                         journalId = journal!!.id,
                         onFormChange = { treatmentEntity = it }
@@ -273,45 +308,57 @@ fun PlantJournalScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                enabled = when (selectedTab) {
-                    0 -> preparationEntity != null
-                    1 -> plantingEntity != null
+                enabled = when {
+                    isEditMode && type == "preparation" -> preparationEntity != null
+                    isEditMode && type == "planting" -> plantingEntity != null
+                    isEditMode && type == "treatment" -> treatmentEntity != null
+                    selectedTab == 0 -> preparationEntity != null
+                    selectedTab == 1 -> plantingEntity != null
                     else -> treatmentEntity != null
                 },
                 onClick = {
-                    when (selectedTab) {
-                        0 -> preparationEntity?.let {
-                            if (categoryId == 0)
-                                preparationViewModel.addPreparation(it) { id ->
-                                    navController.navigate("form_result/preparation/$id")
-                                }
-                            else
+                    when {
+                        isEditMode && type == "preparation" ->
+                            preparationEntity?.let {
                                 preparationViewModel.updatePreparation(it) { id ->
                                     navController.navigate("form_result/preparation/$id")
                                 }
-                        }
+                            }
 
-                        1 -> plantingEntity?.let {
-                            if (categoryId == 0)
-                                plantingViewModel.addPlanting(it) { id ->
-                                    navController.navigate("form_result/planting/$id")
-                                }
-                            else
+                        isEditMode && type == "planting" ->
+                            plantingEntity?.let {
                                 plantingViewModel.updatePlanting(it) { id ->
                                     navController.navigate("form_result/planting/$id")
                                 }
-                        }
+                            }
 
-                        2 -> treatmentEntity?.let {
-                            if (categoryId == 0)
-                                treatmentViewModel.addTreatment(it) { id ->
-                                    navController.navigate("form_result/treatment/$id")
-                                }
-                            else
+                        isEditMode && type == "treatment" ->
+                            treatmentEntity?.let {
                                 treatmentViewModel.updateTreatment(it) { id ->
                                     navController.navigate("form_result/treatment/$id")
                                 }
-                        }
+                            }
+
+                        selectedTab == 0 ->
+                            preparationEntity?.let {
+                                preparationViewModel.addPreparation(it) { id ->
+                                    navController.navigate("form_result/preparation/$id")
+                                }
+                            }
+
+                        selectedTab == 1 ->
+                            plantingEntity?.let {
+                                plantingViewModel.addPlanting(it) { id ->
+                                    navController.navigate("form_result/planting/$id")
+                                }
+                            }
+
+                        else ->
+                            treatmentEntity?.let {
+                                treatmentViewModel.addTreatment(it) { id ->
+                                    navController.navigate("form_result/treatment/$id")
+                                }
+                            }
                     }
                 }
             ) {

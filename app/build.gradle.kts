@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt")   // WAJIB untuk Room
 }
 
+
 android {
     namespace = "com.example.plantmate"
     compileSdk = 36

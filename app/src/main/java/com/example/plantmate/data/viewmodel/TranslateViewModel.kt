@@ -14,9 +14,15 @@ class TranslateViewModel : ViewModel() {
     private val _translatedSections = MutableStateFlow<List<String>>(emptyList())
     val translatedSections: StateFlow<List<String>> = _translatedSections
 
-    // Fungsi translate list of texts ke targetLanguage
-    fun translateSections(sections: List<String>, targetLanguage: String = "id") {
+    /**
+     * Translate list of formatted text WITHOUT breaking spacing, tabs, or line breaks
+     */
+    fun translateSections(
+        sections: List<String>,
+        targetLanguage: String = TranslateLanguage.INDONESIAN
+    ) {
         viewModelScope.launch {
+
             val options = TranslatorOptions.Builder()
                 .setSourceLanguage(TranslateLanguage.ENGLISH)
                 .setTargetLanguage(targetLanguage)
@@ -24,32 +30,48 @@ class TranslateViewModel : ViewModel() {
 
             val translator = Translation.getClient(options)
 
-            // Download model jika belum ada
             translator.downloadModelIfNeeded()
                 .addOnSuccessListener {
-                    // Terjemahkan tiap section satu per satu
-                    val translatedList = mutableListOf<String>()
-                    sections.forEachIndexed { index, text ->
-                        translator.translate(text)
-                            .addOnSuccessListener { translatedText ->
-                                // update list dengan hasil translate
-                                // pastikan thread safe dengan copy list
-                                val current = _translatedSections.value.toMutableList()
-                                while (current.size <= index) current.add("")
-                                current[index] = translatedText
-                                _translatedSections.value = current
+
+                    val result = MutableList(sections.size) { "" }
+
+                    sections.forEachIndexed { sectionIndex, sectionText ->
+
+                        // 🔹 SPLIT PER LINE (PENTING!)
+                        val lines = sectionText.split("\n")
+
+                        val translatedLines = MutableList(lines.size) { "" }
+
+                        lines.forEachIndexed { lineIndex, line ->
+
+                            // 🔸 Kalau baris kosong / cuma spasi → JANGAN translate
+                            if (line.isBlank()) {
+                                translatedLines[lineIndex] = line
+                                return@forEachIndexed
                             }
-                            .addOnFailureListener {
-                                // kalau gagal, tetap pakai teks asli
-                                val current = _translatedSections.value.toMutableList()
-                                while (current.size <= index) current.add("")
-                                current[index] = text
-                                _translatedSections.value = current
-                            }
+
+                            // 🔸 Simpan indent (spasi/tab di awal)
+                            val indent = line.takeWhile { it == ' ' || it == '\t' }
+                            val content = line.dropWhile { it == ' ' || it == '\t' }
+
+                            translator.translate(content)
+                                .addOnSuccessListener { translatedText ->
+                                    translatedLines[lineIndex] =
+                                        indent + translatedText
+
+                                    result[sectionIndex] = translatedLines.joinToString("\n")
+                                    _translatedSections.value = result.toList()
+                                }
+                                .addOnFailureListener {
+                                    translatedLines[lineIndex] = line
+                                    result[sectionIndex] = translatedLines.joinToString("\n")
+                                    _translatedSections.value = result.toList()
+                                }
+                        }
                     }
                 }
                 .addOnFailureListener {
-                    // gagal download model, pakai teks asli
+                    // Jika gagal download model → pakai teks asli
                     _translatedSections.value = sections
                 }
         }

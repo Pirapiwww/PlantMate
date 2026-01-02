@@ -208,13 +208,15 @@ fun JournalCategoryResultScreen(
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(350.dp),
+                    .height(380.dp),
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 Text(
                     text = translatedAnalysisAI,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState())
                 )
             }
         }
