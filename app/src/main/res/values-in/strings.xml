@@ -51,7 +51,7 @@
 
     <!-- Plant Journal Feature -->
     <string name="select_journal">Pilih Jurnal</string>
-    <string name="add">Tambah Jurnal Baru</string>
+    <string name="add">Analisis Journal</string>
     <string name="save">Simpan ke My Journal</string>
     <string name="journal_format">Jurnal#</string>
     <string name="created">Dibuat pada: </string>

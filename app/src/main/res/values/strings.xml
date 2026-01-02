@@ -52,7 +52,7 @@
 
     <!-- Plant Journal Feature -->
     <string name="select_journal">Select Journal</string>
-    <string name="add">Add New Journal</string>
+    <string name="add">Analyze Journal</string>
     <string name="save">Save to My Journal</string>
     <string name="journal_format">Journal#</string>
     <string name="created">Created at: </string>
