@@ -120,7 +120,7 @@ fun BookmarkScreen(
                 }
 
                 Text(
-                    text = stringResource(id = R.string.my_journal),
+                    text = stringResource(id = R.string.bookmark),
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.align(Alignment.Center)
